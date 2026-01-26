@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Seven-keys-app",
-    "slug": "Seven-keys-app",
+    "slug": "seven-keys",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -25,6 +25,31 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "b0ef45f6-c740-4b67-a0be-c8be985d60cc"
+      }
+    },
+    "owner": "rossb1",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/b0ef45f6-c740-4b67-a0be-c8be985d60cc"
+    },
+    "plugins": [
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./fonts/BrittiSansTrial-Light-BF6757bfd494951.otf",
+            "./fonts/BrittiSansTrial-Regular-BF6757bfd47ffbf.otf",
+            "./fonts/BrittiSansTrial-Semibold-BF6757bfd443a8a.otf",
+            "./fonts/BrittiSansTrial-Bold-BF6757bfd4a96ed.otf"
+          ]
+        }
+      ]
+    ]
   }
 }
