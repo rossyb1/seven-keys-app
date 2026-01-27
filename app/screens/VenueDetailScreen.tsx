@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   ImageBackground,
   Linking,
+  Dimensions,
+  FlatList,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -22,6 +24,9 @@ import {
 } from 'lucide-react-native';
 import type { Venue } from '../../src/types/database';
 import { getVenueImage } from '../../src/utils/venueImages';
+import { getVenueGallery } from '../../src/utils/venueGallery';
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 interface VenueDetailScreenProps {
   navigation: any;
@@ -94,11 +99,19 @@ export default function VenueDetailScreen({ navigation, route }: VenueDetailScre
   // This allows the image to extend behind the status bar but be fully visible when scrolling
   const heroSectionHeight = 220 + insets.top;
 
-  // Get venue images
+  // Get venue images - prefer gallery, fallback to single image
+  const galleryImages = getVenueGallery(venue.name);
   const localImage = getVenueImage(venue.name);
   const remoteImages = venue.photos && venue.photos.length > 0 ? venue.photos : [];
-  const images = localImage ? [localImage] : remoteImages;
+  const images = galleryImages || (localImage ? [localImage] : remoteImages);
   const currentImage = images[currentImageIndex] || null;
+  const hasMultipleImages = images.length > 1;
+  
+  // Handle image scroll
+  const handleImageScroll = (event: any) => {
+    const slideIndex = Math.round(event.nativeEvent.contentOffset.x / SCREEN_WIDTH);
+    setCurrentImageIndex(slideIndex);
+  };
 
   // Get venue initial for logo
   const venueInitial = venue.name[0]?.toUpperCase() || 'V';
@@ -129,18 +142,29 @@ export default function VenueDetailScreen({ navigation, route }: VenueDetailScre
       >
         {/* Hero Image Section */}
         <View style={[styles.heroSection, { height: heroSectionHeight }]}>
-          {currentImage ? (
-            <ImageBackground
-              source={typeof currentImage === 'string' ? { uri: currentImage } : currentImage}
-              style={styles.heroImage}
-              resizeMode="cover"
-            >
-              {/* Gradient Overlay */}
-              <LinearGradient
-                colors={['transparent', '#0A1628']}
-                start={{ x: 0, y: 1 }}
-                end={{ x: 0, y: 0 }}
-                style={styles.heroGradient}
+          {images.length > 0 ? (
+            <>
+              <FlatList
+                data={images}
+                horizontal
+                pagingEnabled
+                showsHorizontalScrollIndicator={false}
+                onMomentumScrollEnd={handleImageScroll}
+                keyExtractor={(_, index) => index.toString()}
+                renderItem={({ item }) => (
+                  <ImageBackground
+                    source={typeof item === 'string' ? { uri: item } : item}
+                    style={[styles.heroImage, { width: SCREEN_WIDTH }]}
+                    resizeMode="cover"
+                  >
+                    <LinearGradient
+                      colors={['transparent', '#0A1628']}
+                      start={{ x: 0, y: 1 }}
+                      end={{ x: 0, y: 0 }}
+                      style={styles.heroGradient}
+                    />
+                  </ImageBackground>
+                )}
               />
               
               {/* Back Button */}
@@ -153,6 +177,21 @@ export default function VenueDetailScreen({ navigation, route }: VenueDetailScre
                   <ChevronLeft size={20} color="#FFFFFF" strokeWidth={2} />
                 </View>
               </TouchableOpacity>
+
+              {/* Image Dots Indicator */}
+              {hasMultipleImages && (
+                <View style={styles.dotsContainer}>
+                  {images.map((_, index) => (
+                    <View
+                      key={index}
+                      style={[
+                        styles.dot,
+                        index === currentImageIndex && styles.dotActive,
+                      ]}
+                    />
+                  ))}
+                </View>
+              )}
 
               {/* Venue Info at Bottom Left */}
               <View style={styles.venueInfoContainer}>
@@ -172,7 +211,7 @@ export default function VenueDetailScreen({ navigation, route }: VenueDetailScre
                   </View>
                 </View>
               </View>
-            </ImageBackground>
+            </>
           ) : (
             <View style={[styles.heroImagePlaceholder, { height: heroSectionHeight }]}>
               <LinearGradient
@@ -339,13 +378,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   heroImage: {
-    width: '100%',
     height: '100%',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
   },
   heroImagePlaceholder: {
     width: '100%',
@@ -370,6 +403,26 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.4)',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  dotsContainer: {
+    position: 'absolute',
+    bottom: 70,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 8,
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: 'rgba(255, 255, 255, 0.4)',
+  },
+  dotActive: {
+    backgroundColor: '#FFFFFF',
+    width: 24,
   },
   venueInfoContainer: {
     position: 'absolute',
