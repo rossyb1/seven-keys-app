@@ -25,6 +25,8 @@ import {
 import type { Venue } from '../../src/types/database';
 import { getVenueImage } from '../../src/utils/venueImages';
 import { getVenueGallery } from '../../src/utils/venueGallery';
+import { getVenueLogo } from '../../src/utils/venueLogos';
+import { Image } from 'react-native';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -115,6 +117,7 @@ export default function VenueDetailScreen({ navigation, route }: VenueDetailScre
 
   // Get venue initial for logo
   const venueInitial = venue.name[0]?.toUpperCase() || 'V';
+  const venueLogo = getVenueLogo(venue.name);
 
   // Handle directions
   const handleDirections = () => {
@@ -191,7 +194,11 @@ export default function VenueDetailScreen({ navigation, route }: VenueDetailScre
               <View style={styles.venueInfoContainer}>
                 <View style={styles.venueInfoRow}>
                   <View style={styles.logoBox}>
-                    <Text style={styles.logoText}>{venueInitial}</Text>
+                    {venueLogo ? (
+                      <Image source={venueLogo} style={styles.logoImage} resizeMode="contain" />
+                    ) : (
+                      <Text style={styles.logoText}>{venueInitial}</Text>
+                    )}
                   </View>
                   <View style={styles.venueInfoText}>
                     <Text style={styles.venueName}>{venue.name}</Text>
@@ -224,7 +231,11 @@ export default function VenueDetailScreen({ navigation, route }: VenueDetailScre
                 <View style={styles.venueInfoContainer}>
                   <View style={styles.venueInfoRow}>
                     <View style={styles.logoBox}>
-                      <Text style={styles.logoText}>{venueInitial}</Text>
+                      {venueLogo ? (
+                        <Image source={venueLogo} style={styles.logoImage} resizeMode="contain" />
+                      ) : (
+                        <Text style={styles.logoText}>{venueInitial}</Text>
+                      )}
                     </View>
                     <View style={styles.venueInfoText}>
                       <Text style={styles.venueName}>{venue.name}</Text>
@@ -441,6 +452,11 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 18,
     fontWeight: '600',
+  },
+  logoImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 10,
   },
   venueInfoText: {
     flex: 1,
