@@ -337,13 +337,10 @@ export default function ConciergeScreen({ navigation, route }: ConciergeScreenPr
   const handleQuickAction = (actionText: string) => {
     switch (actionText) {
       case "I'd like to make a reservation":
-        navigation.navigate('ReservationForm');
+        navigation.navigate('VenueTypeSelection');
         break;
       case "I'd like to book an experience":
-        navigation.navigate('ExperienceForm');
-        break;
-      case "I need help with my bookings":
-        navigation.navigate('MyBookings');
+        navigation.navigate('ExperienceTypeSelection');
         break;
       case "I'd like to book for a large group":
         navigation.navigate('GroupBookingForm');
@@ -468,13 +465,6 @@ export default function ConciergeScreen({ navigation, route }: ConciergeScreenPr
                 activeOpacity={0.7}
               >
                 <Text style={styles.quickActionText}>Book an Experience</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.quickActionButton}
-                onPress={() => handleQuickAction("I need help with my bookings")}
-                activeOpacity={0.7}
-              >
-                <Text style={styles.quickActionText}>My Bookings</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.quickActionButton}

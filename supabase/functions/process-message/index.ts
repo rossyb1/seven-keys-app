@@ -3,9 +3,22 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+// SECURITY: Restrict CORS to known origins only
+const ALLOWED_ORIGINS = [
+  "http://localhost:8081",     // Expo web dev
+  "http://127.0.0.1:8081",     // Expo web dev alternative
+  "exp://localhost:8081",       // Expo Go
+  // Add your production domain here when deploying:
+  // "https://your-app-domain.com",
+];
+
+const getCorsHeaders = (origin?: string | null) => {
+  const allowedOrigin = origin && ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  return {
+    "Access-Control-Allow-Origin": allowedOrigin,
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    "Access-Control-Allow-Credentials": "true",
+  };
 };
 
 const ANTHROPIC_API_KEY = Deno.env.get("ANTHROPIC_API_KEY");
@@ -90,6 +103,10 @@ CORPORATE:
 Escalate silently: Groups 10+, yacht, nightclub tables, event tickets, corporate, complaints.`;
 
 serve(async (req) => {
+  // Get request origin for CORS
+  const origin = req.headers.get("origin");
+  const corsHeaders = getCorsHeaders(origin);
+  
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });

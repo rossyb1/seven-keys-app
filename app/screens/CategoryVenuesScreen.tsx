@@ -58,7 +58,8 @@ export default function CategoryVenuesScreen({ route, navigation }: Props) {
           .select('*')
           .eq('type', venueType)
           .eq('status', 'active')
-          .order('name');
+          .order('name')
+          .limit(50); // Pagination - load 50 at a time
 
         if (error) {
           console.error('Error fetching venues:', error);

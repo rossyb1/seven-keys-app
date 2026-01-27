@@ -49,6 +49,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   // Check initial session and fetch user profile
   useEffect(() => {
     let isMounted = true;
+    const abortController = new AbortController();
     
     const checkSession = async () => {
       try {
@@ -65,7 +66,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
           return;
         }
 
-        // Add timeout to prevent hanging (increased to 10 seconds)
+        // Check if aborted
+        if (abortController.signal.aborted) return;
+
+        // Add timeout to prevent hanging (10 seconds)
         const timeoutPromise = new Promise((_, reject) => 
           setTimeout(() => reject(new Error('Session check timeout')), 10000)
         );
@@ -76,7 +80,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           timeoutPromise
         ]) as any;
 
-        if (!isMounted) return;
+        if (!isMounted || abortController.signal.aborted) return;
 
         if (error) {
           console.error('Error getting session:', error);
@@ -154,6 +158,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     // Cleanup subscription on unmount
     return () => {
       isMounted = false;
+      abortController.abort();
       if (subscription) {
         subscription.unsubscribe();
       }

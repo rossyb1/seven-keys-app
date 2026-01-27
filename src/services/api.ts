@@ -11,11 +11,13 @@ export async function validateInviteCode(
 ): Promise<{ valid: boolean; error?: string }> {
   const upperCode = code.toUpperCase().trim();
   
-  // Test codes that bypass Supabase validation (for development/testing)
-  const TEST_CODES = ['TEST', 'TEST123', 'DEMO', 'DEV'];
-  if (TEST_CODES.includes(upperCode)) {
-    console.log('✅ Using test invite code (bypassing Supabase)');
-    return { valid: true };
+  // Test codes ONLY work in development (disabled in production)
+  if (__DEV__) {
+    const TEST_CODES = ['TEST', 'TEST123', 'DEMO', 'DEV'];
+    if (TEST_CODES.includes(upperCode)) {
+      console.log('✅ Using test invite code (DEV ONLY - disabled in production)');
+      return { valid: true };
+    }
   }
 
   // Check if Supabase is properly configured
@@ -143,7 +145,7 @@ async function completePartialSignup(
         email: userData.email,
         full_name: userData.full_name,
         phone: userData.phone,
-        tier: 'blue',
+        tier: 'member',
         points_balance: 0,
         preferred_cities: JSON.stringify([]),
         invite_code_used: userData.invite_code.toUpperCase(),
@@ -203,8 +205,9 @@ export async function createUser(userData: {
       };
     }
 
-    // Generate a random password (user will reset via email later)
-    const randomPassword = Math.random().toString(36).slice(-12) + Math.random().toString(36).slice(-12) + 'A1!';
+    // Generate a cryptographically secure random password
+    // Uses crypto.randomUUID() which is more secure than Math.random()
+    const randomPassword = `${crypto.randomUUID()}${crypto.randomUUID()}`.replace(/-/g, '').slice(0, 24) + 'Aa1!';
 
     // REMOVED: Pre-check for existing email
     // This was blocking legitimate signups. We'll let the database constraints handle duplicates.
@@ -219,9 +222,12 @@ export async function createUser(userData: {
       try {
         console.log(`🔄 createUser attempt ${attempt}/${maxRetries}`);
 
-        // Add timeout to prevent hanging (increased to 20 seconds)
+        // Add timeout to prevent hanging (15 seconds)
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
+        
         const timeoutPromise = new Promise<{ user: User | null; error?: string }>((_, reject) =>
-          setTimeout(() => reject(new Error('Network request timed out. Please check your internet connection and try again.')), 20000)
+          setTimeout(() => reject(new Error('Network request timed out. Please check your internet connection and try again.')), 15000)
         );
 
         const signUpPromise = (async () => {
@@ -323,7 +329,7 @@ export async function createUser(userData: {
             email: userData.email,
             full_name: userData.full_name,
             phone: userData.phone,
-            tier: 'blue',
+            tier: 'member',
             points_balance: 0,
             preferred_cities: JSON.stringify([]),
             invite_code_used: userData.invite_code.toUpperCase(),

@@ -24,15 +24,29 @@ const BORDER_RADIUS = 12;
 
 interface ExperienceFormScreenProps {
   navigation: any;
+  route?: any;
 }
 
 const EXPERIENCE_TYPES = ['Yacht', 'Beach Club', 'Nightclub', 'Event Tickets'];
 
-export default function ExperienceFormScreen({ navigation }: ExperienceFormScreenProps) {
+// Map route param IDs to display names
+const EXPERIENCE_TYPE_MAP: Record<string, string> = {
+  'yachts': 'Yacht',
+  'desert': 'Desert Experience',
+  'chauffeur': 'Private Chauffeur',
+  'private_jet': 'Private Jet',
+};
+
+export default function ExperienceFormScreen({ navigation, route }: ExperienceFormScreenProps) {
   const insets = useSafeAreaInsets();
   const { user } = useAuth();
 
-  const [experienceType, setExperienceType] = useState<string | null>(null);
+  // Get pre-selected experience type from route params
+  const preSelectedType = route?.params?.experienceType 
+    ? EXPERIENCE_TYPE_MAP[route.params.experienceType] || null
+    : null;
+
+  const [experienceType, setExperienceType] = useState<string | null>(preSelectedType);
   const [venues, setVenues] = useState<Venue[]>([]);
   const [selectedVenue, setSelectedVenue] = useState<Venue | null>(null);
   const [showVenuePicker, setShowVenuePicker] = useState(false);
@@ -157,31 +171,33 @@ export default function ExperienceFormScreen({ navigation }: ExperienceFormScree
         </View>
 
         <View style={styles.form}>
-          {/* Experience Type */}
-          <View style={styles.field}>
-            <Text style={styles.label}>Experience Type *</Text>
-            <View style={styles.buttonRow}>
-              {EXPERIENCE_TYPES.map((type) => (
-                <TouchableOpacity
-                  key={type}
-                  style={[
-                    styles.typeButton,
-                    experienceType === type && styles.typeButtonSelected,
-                  ]}
-                  onPress={() => setExperienceType(type)}
-                >
-                  <Text
+          {/* Experience Type - only show if not pre-selected */}
+          {!preSelectedType && (
+            <View style={styles.field}>
+              <Text style={styles.label}>Experience Type *</Text>
+              <View style={styles.buttonRow}>
+                {EXPERIENCE_TYPES.map((type) => (
+                  <TouchableOpacity
+                    key={type}
                     style={[
-                      styles.typeButtonText,
-                      experienceType === type && styles.typeButtonTextSelected,
+                      styles.typeButton,
+                      experienceType === type && styles.typeButtonSelected,
                     ]}
+                    onPress={() => setExperienceType(type)}
                   >
-                    {type}
-                  </Text>
-                </TouchableOpacity>
-              ))}
+                    <Text
+                      style={[
+                        styles.typeButtonText,
+                        experienceType === type && styles.typeButtonTextSelected,
+                      ]}
+                    >
+                      {type}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
             </View>
-          </View>
+          )}
 
           {/* Venue (only for Beach Club) */}
           {showVenueField && (

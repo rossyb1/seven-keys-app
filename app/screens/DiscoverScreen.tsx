@@ -45,7 +45,7 @@ const categories: Category[] = [
   { 
     id: 'events', 
     name: 'EVENTS', 
-    image: require('../../Images/events-category.png'),
+    image: require('../../Images/events-category.jpg'),
     subtitle: 'Worldwide', 
     enabled: false 
   },

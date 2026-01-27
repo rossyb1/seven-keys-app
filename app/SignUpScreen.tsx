@@ -104,10 +104,28 @@ export default function SignUpScreen({ navigation, route }: SignUpScreenProps) {
       return;
     }
 
-    // Validate password length (minimum 6 characters)
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters');
+    // Validate password strength (minimum 8 characters with complexity)
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters');
       console.log('❌ Validation failed: password too short');
+      return;
+    }
+    
+    if (!/[A-Z]/.test(password)) {
+      setError('Password must contain at least one uppercase letter');
+      console.log('❌ Validation failed: no uppercase letter');
+      return;
+    }
+    
+    if (!/[a-z]/.test(password)) {
+      setError('Password must contain at least one lowercase letter');
+      console.log('❌ Validation failed: no lowercase letter');
+      return;
+    }
+    
+    if (!/[0-9]/.test(password)) {
+      setError('Password must contain at least one number');
+      console.log('❌ Validation failed: no number');
       return;
     }
 

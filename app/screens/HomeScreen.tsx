@@ -34,7 +34,7 @@ const categories: Category[] = [
   { 
     id: 'events', 
     name: 'EVENTS', 
-    image: require('../../Images/events-category.png'), 
+    image: require('../../Images/events-category.jpg'), 
     subtitle: 'Worldwide', 
     enabled: false 
   },
@@ -43,7 +43,7 @@ const categories: Category[] = [
     name: 'EXPERIENCES', 
     image: require('../../Images/experiences-category.jpg'), 
     subtitle: 'Yachts & more', 
-    enabled: false 
+    enabled: true 
   },
   { 
     id: 'villas', 
@@ -59,10 +59,14 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
 
   const handleCategoryPress = (category: Category) => {
     if (category.enabled) {
-      navigation.navigate('CategoryVenues', {
-        categoryId: category.id,
-        categoryName: category.name,
-      });
+      if (category.id === 'experiences') {
+        navigation.navigate('ExperiencesList');
+      } else {
+        navigation.navigate('CategoryVenues', {
+          categoryId: category.id,
+          categoryName: category.name,
+        });
+      }
     } else {
       Alert.alert(
         'Coming Soon',

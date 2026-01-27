@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Camera } from 'lucide-react-native';
 import { BrandColors, BackgroundColors, TextColors, AccentColors, Spacing, BorderRadius, Typography, Shadows } from '../../constants/brand';
@@ -52,7 +53,8 @@ export default function VenueCard({ venue, onPress, width }: VenueCardProps) {
             <Image 
               source={localImage} 
               style={styles.image} 
-              resizeMode="cover"
+              contentFit="cover"
+              cachePolicy="memory-disk"
             />
             <LinearGradient
               colors={['transparent', 'rgba(9, 22, 46, 0.8)']}
@@ -64,7 +66,8 @@ export default function VenueCard({ venue, onPress, width }: VenueCardProps) {
             <Image 
               source={{ uri: remoteImageUrl }} 
               style={styles.image} 
-              resizeMode="cover"
+              contentFit="cover"
+              cachePolicy="memory-disk"
             />
             <LinearGradient
               colors={['transparent', 'rgba(9, 22, 46, 0.8)']}

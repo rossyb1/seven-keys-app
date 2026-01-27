@@ -15,7 +15,8 @@ const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 
 export default function ChangeDateScreen({ navigation, route }: ChangeDateScreenProps) {
   const booking = route.params?.booking || { date: 'Saturday, 15 February' };
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [currentMonth, setCurrentMonth] = useState(new Date(2026, 1, 1));
+  const today = new Date();
+  const [currentMonth, setCurrentMonth] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
 
   const getDaysInMonth = (date: Date) => {
     return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();

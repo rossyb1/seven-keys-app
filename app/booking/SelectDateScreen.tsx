@@ -24,7 +24,8 @@ export default function SelectDateScreen({ navigation, route }: SelectDateScreen
   }
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [currentMonth, setCurrentMonth] = useState(new Date(2026, 1, 1)); // February 2026
+  const today = new Date();
+  const [currentMonth, setCurrentMonth] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
 
   const getDaysInMonth = (date: Date) => {
     return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();

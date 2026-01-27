@@ -14,6 +14,9 @@ import PermissionsScreen from './app/PermissionsScreen';
 import MainTabs from './app/MainTabs';
 import VenueDetailScreen from './app/screens/VenueDetailScreen';
 import CategoryVenuesScreen from './app/screens/CategoryVenuesScreen';
+import ExperiencesListScreen from './app/screens/ExperiencesListScreen';
+import YachtsListScreen from './app/screens/YachtsListScreen';
+import YachtDetailScreen from './app/screens/YachtDetailScreen';
 import SelectDateScreen from './app/booking/SelectDateScreen';
 import SelectTimeScreen from './app/booking/SelectTimeScreen';
 import PartySizeScreen from './app/booking/PartySizeScreen';
@@ -37,7 +40,9 @@ import ChangeTimeScreen from './app/booking/ChangeTimeScreen';
 import ChangeDateScreen from './app/booking/ChangeDateScreen';
 import AddGuestsScreen from './app/booking/AddGuestsScreen';
 import WelcomeHomeScreen from './src/screens/main/WelcomeHomeScreen';
+import VenueTypeSelectionScreen from './app/concierge/VenueTypeSelectionScreen';
 import ReservationFormScreen from './app/concierge/ReservationFormScreen';
+import ExperienceTypeSelectionScreen from './app/concierge/ExperienceTypeSelectionScreen';
 import ExperienceFormScreen from './app/concierge/ExperienceFormScreen';
 import GroupBookingFormScreen from './app/concierge/GroupBookingFormScreen';
 import RecommendationsScreen from './app/concierge/RecommendationsScreen';
@@ -82,6 +87,9 @@ function AppStack() {
       <Stack.Screen name="MainTabs" component={MainTabs} />
       <Stack.Screen name="CategoryVenues" component={CategoryVenuesScreen} />
       <Stack.Screen name="VenueDetail" component={VenueDetailScreen} />
+      <Stack.Screen name="ExperiencesList" component={ExperiencesListScreen} />
+      <Stack.Screen name="YachtsList" component={YachtsListScreen} />
+      <Stack.Screen name="YachtDetail" component={YachtDetailScreen} />
       <Stack.Screen name="SelectDate" component={SelectDateScreen} />
       <Stack.Screen name="SelectTime" component={SelectTimeScreen} />
       <Stack.Screen name="PartySize" component={PartySizeScreen} />
@@ -103,7 +111,9 @@ function AppStack() {
       <Stack.Screen name="ChangeTime" component={ChangeTimeScreen} />
       <Stack.Screen name="ChangeDate" component={ChangeDateScreen} />
       <Stack.Screen name="AddGuests" component={AddGuestsScreen} />
+      <Stack.Screen name="VenueTypeSelection" component={VenueTypeSelectionScreen} />
       <Stack.Screen name="ReservationForm" component={ReservationFormScreen} />
+      <Stack.Screen name="ExperienceTypeSelection" component={ExperienceTypeSelectionScreen} />
       <Stack.Screen name="ExperienceForm" component={ExperienceFormScreen} />
       <Stack.Screen name="GroupBookingForm" component={GroupBookingFormScreen} />
       <Stack.Screen name="Recommendations" component={RecommendationsScreen} />
