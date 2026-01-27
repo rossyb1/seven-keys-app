@@ -19,6 +19,13 @@ interface DesertExperience {
 
 const experiences: DesertExperience[] = [
   {
+    id: 'dune_buggy',
+    name: 'Dune Buggy Adventure',
+    duration: '4 hours',
+    description: 'High-octane desert buggy experience across golden dunes',
+    thumbnail: require('../../Images/desert-buggy.jpg'),
+  },
+  {
     id: 'sunset_safari',
     name: 'Sunset Desert Safari',
     duration: '6 hours',
