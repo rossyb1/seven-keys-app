@@ -1,4 +1,3 @@
-import 'react-native-get-random-values'; // Polyfill for crypto (must be first!)
 import React from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
