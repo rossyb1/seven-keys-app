@@ -55,7 +55,11 @@ const yachtsData: Record<string, YachtData> = {
     size: '82ft',
     description: 'Our largest and most luxurious yacht, offering unparalleled comfort and style for the ultimate Dubai experience.',
     images: [
-      require('../../Images/yachts/morrigan_03.jpeg'), // Placeholder - need real images
+      require('../../Images/yachts/matrix_01.jpg'),
+      require('../../Images/yachts/matrix_02.jpg'),
+      require('../../Images/yachts/matrix_03.jpg'),
+      require('../../Images/yachts/matrix_04.jpg'),
+      require('../../Images/yachts/matrix_05.jpg'),
     ],
     details: {
       capacity: 'Up to 15 guests',
@@ -75,7 +79,11 @@ const yachtsData: Record<string, YachtData> = {
     size: '70ft',
     description: 'Elegant and comfortable, My Serenity offers a peaceful escape on Dubai\'s beautiful waters.',
     images: [
-      require('../../Images/yachts/morrigan_03.jpeg'), // Placeholder - need real images
+      require('../../Images/yachts/serenity_01.jpg'),
+      require('../../Images/yachts/serenity_02.jpg'),
+      require('../../Images/yachts/serenity_03.jpg'),
+      require('../../Images/yachts/serenity_04.jpg'),
+      require('../../Images/yachts/serenity_05.jpg'),
     ],
     details: {
       capacity: 'Up to 12 guests',
@@ -95,7 +103,12 @@ const yachtsData: Record<string, YachtData> = {
     size: '52ft',
     description: 'Sporty and modern, the C52 is perfect for those seeking a thrilling yet luxurious yacht experience.',
     images: [
-      require('../../Images/yachts/morrigan_03.jpeg'), // Placeholder - need real images
+      require('../../Images/yachts/c52_01.jpg'),
+      require('../../Images/yachts/c52_02.jpg'),
+      require('../../Images/yachts/c52_03.jpg'),
+      require('../../Images/yachts/c52_04.jpg'),
+      require('../../Images/yachts/c52_05.jpg'),
+      require('../../Images/yachts/c52_06.jpg'),
     ],
     details: {
       capacity: 'Up to 8 guests',

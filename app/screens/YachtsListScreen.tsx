@@ -30,21 +30,21 @@ const yachts: Yacht[] = [
     name: 'Matrix',
     size: '82ft',
     description: 'Premium luxury yacht experience',
-    thumbnail: require('../../Images/yachts/morrigan_03.jpeg'), // Placeholder - need real image
+    thumbnail: require('../../Images/yachts/matrix_01.jpg'),
   },
   {
     id: 'my_serenity',
     name: 'My Serenity',
     size: '70ft',
     description: 'Elegant and comfortable yacht charter',
-    thumbnail: require('../../Images/yachts/morrigan_03.jpeg'), // Placeholder - need real image
+    thumbnail: require('../../Images/yachts/serenity_01.jpg'),
   },
   {
     id: 'c52',
     name: 'C52',
     size: '52ft',
     description: 'Sporty and modern yacht',
-    thumbnail: require('../../Images/yachts/morrigan_03.jpeg'), // Placeholder - need real image
+    thumbnail: require('../../Images/yachts/c52_01.jpg'),
   },
 ];
 
