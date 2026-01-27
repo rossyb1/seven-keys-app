@@ -30,7 +30,7 @@ const yachtsData: Record<string, YachtData> = {
     id: 'morrigan',
     name: 'Morrigan',
     size: '70ft',
-    description: 'Experience luxury on the water with our flagship 70ft yacht. Perfect for cruising Dubai\'s stunning coastline with family and friends.',
+    description: 'Step aboard Morrigan, a magnificent 70ft Galeon yacht designed for exceptional experiences in Dubai. Boasting luxurious interiors and spacious outdoor areas, Morrigan offers the ultimate blend of elegance, comfort, and adventure. Whether you\'re cruising along Dubai\'s vibrant coastline, anchoring at the stunning Palm Jumeirah, or exploring the iconic World Islands, Morrigan promises an unforgettable escape on the water. With 1 Master and 1 VIP cabin, Morrigan accommodates up to 4 overnight guests, making it perfect for intimate gatherings or extended charters. Its capacity of 12 ensures there\'s plenty of room for celebrations, corporate events, or leisurely family outings.',
     images: [
       require('../../Images/yachts/morrigan_cover.jpg'),
       require('../../Images/yachts/morrigan_02.jpg'),
