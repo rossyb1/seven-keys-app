@@ -16,9 +16,9 @@ interface SevenKCardScreenProps {
 
 // Tier thresholds
 const TIER_THRESHOLDS = {
-  member: 0,
-  select: 5000,
-  elite: 25000,
+  blue: 0,
+  silver: 5000,
+  gold: 25000,
   black: 100000,
 };
 
@@ -55,13 +55,13 @@ export default function SevenKCardScreen({ navigation }: SevenKCardScreenProps) 
   );
 
   // Helper function to get member since year
-  const getMemberSinceYear = (createdAt: string): string => {
+  const getBlueSinceYear = (createdAt: string): string => {
     const date = new Date(createdAt);
     return date.getFullYear().toString();
   };
 
   // Helper function to format tier for card
-  const getTierForCard = (tier: User['tier']): 'member' | 'select' | 'elite' | 'black' => {
+  const getTierForCard = (tier: User['tier']): 'blue' | 'silver' | 'gold' | 'black' => {
     return tier;
   };
 
@@ -82,17 +82,17 @@ export default function SevenKCardScreen({ navigation }: SevenKCardScreenProps) 
     let nextThreshold: number;
 
     switch (currentTier) {
-      case 'member':
-        nextTier = 'select';
+      case 'blue':
+        nextTier = 'silver';
         currentThreshold = TIER_THRESHOLDS.member;
         nextThreshold = TIER_THRESHOLDS.select;
         break;
-      case 'select':
-        nextTier = 'elite';
+      case 'silver':
+        nextTier = 'gold';
         currentThreshold = TIER_THRESHOLDS.select;
         nextThreshold = TIER_THRESHOLDS.elite;
         break;
-      case 'elite':
+      case 'gold':
         nextTier = 'black';
         currentThreshold = TIER_THRESHOLDS.elite;
         nextThreshold = TIER_THRESHOLDS.black;
@@ -119,12 +119,12 @@ export default function SevenKCardScreen({ navigation }: SevenKCardScreenProps) 
   // Format tier name for display
   const formatTierName = (tier: User['tier']): string => {
     const tierMap: Record<User['tier'], string> = {
-      member: 'Member',
-      select: 'Select',
-      elite: 'Elite',
+      blue: 'Blue',
+      silver: 'Silver',
+      gold: 'Gold',
       black: 'Black Card',
     };
-    return tierMap[tier] || 'Member';
+    return tierMap[tier] || 'Blue';
   };
 
   // Handle share card
@@ -143,7 +143,7 @@ export default function SevenKCardScreen({ navigation }: SevenKCardScreenProps) 
   };
 
   // Render membership card based on tier
-  const renderMembershipCard = () => {
+  const renderBlueshipCard = () => {
     if (!user) return null;
     
     const memberName = user.full_name?.toUpperCase() || 'MEMBER';
@@ -151,11 +151,11 @@ export default function SevenKCardScreen({ navigation }: SevenKCardScreenProps) 
     switch(user.tier?.toLowerCase()) {
       case 'black':
         return <BlackCard memberName={memberName} />;
-      case 'elite':
+      case 'gold':
         return <GoldCard memberName={memberName} />;
-      case 'select':
+      case 'silver':
         return <SilverCard memberName={memberName} />;
-      case 'member':
+      case 'blue':
       default:
         return <BlueCard memberName={memberName} />;
     }
@@ -183,7 +183,7 @@ export default function SevenKCardScreen({ navigation }: SevenKCardScreenProps) 
         ) : user ? (
           <>
             <View style={styles.cardContainer}>
-              {renderMembershipCard()}
+              {renderBlueshipCard()}
             </View>
 
             {/* Stats */}

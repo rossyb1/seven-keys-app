@@ -6,7 +6,7 @@ export type User = {
   phone: string | null;
   full_name: string;
   photo_url: string | null;
-  tier: 'member' | 'select' | 'elite' | 'black';
+  tier: 'blue' | 'silver' | 'gold' | 'black';
   points_balance: number;
   preferred_cities: string[];
   invite_code_used: string | null;

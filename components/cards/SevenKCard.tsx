@@ -5,7 +5,7 @@ import { BrandColors, BackgroundColors, TextColors, AccentColors, Spacing, Borde
 
 interface SevenKCardProps {
   memberName: string;
-  tier: 'member' | 'select' | 'elite' | 'black';
+  tier: 'blue' | 'silver' | 'gold' | 'black';
   memberSince: string;
 }
 
