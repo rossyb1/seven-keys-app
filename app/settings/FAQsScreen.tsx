@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { BrandColors, BackgroundColors, TextColors, AccentColors, Spacing, Typography, BorderRadius } from '../../constants/brand';
+import { BrandColors, BackgroundColors, TextColors, AccentColors, Spacing, Typography, BorderRadius, Shadows } from '../../constants/brand';
 import { ChevronLeft, ChevronRight } from '../../components/icons/AppIcons';
 
 interface FAQsScreenProps {
@@ -110,23 +110,24 @@ const styles = StyleSheet.create({
   faqItem: {
     backgroundColor: BackgroundColors.cardBg,
     borderWidth: 1,
-    borderColor: AccentColors.border,
+    borderColor: AccentColors.borderLight,
     borderRadius: BorderRadius.base,
     marginBottom: Spacing.base,
     overflow: 'hidden',
+    ...Shadows.sm,
   },
   faqHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: Spacing.base,
-    minHeight: 52,
+    minHeight: 56,
   },
   faqQuestion: {
     flex: 1,
     color: TextColors.primary,
     fontSize: Typography.fontSize.base,
-    fontWeight: '500',
+    fontFamily: Typography.fontFamily.semibold,
     marginRight: Spacing.base,
   },
   faqChevronContainer: {

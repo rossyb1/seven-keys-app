@@ -29,7 +29,7 @@ export const AccentColors = {
   reward: '#D4A574',       // Warm amber - points, rewards, celebrations
   rewardMuted: 'rgba(212, 165, 116, 0.15)', // Amber with opacity for backgrounds
   border: '#1A2844',       // Subtle borders
-  borderLight: 'rgba(86, 132, 196, 0.1)', // Very subtle borders on cards
+  borderLight: 'rgba(86, 132, 196, 0.2)', // Card borders (increased from 0.1 for better definition)
 } as const;
 
 export const StatusColors = {
@@ -56,12 +56,20 @@ export const Typography = {
     '2xl': 28,
     '3xl': 32,
     '4xl': 40,
+    '5xl': 48,
+    '6xl': 56,
   },
   // Line heights as multipliers
   lineHeight: {
     tight: 1.2,
     normal: 1.5,
     relaxed: 1.7,
+  },
+  // Letter spacing for section headers
+  letterSpacing: {
+    tight: 0.5,
+    normal: 1.2,
+    wide: 2,
   },
 } as const;
 

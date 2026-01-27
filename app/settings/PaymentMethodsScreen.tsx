@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { BrandColors, BackgroundColors, TextColors, AccentColors, Spacing, Typography, BorderRadius } from '../../constants/brand';
+import { BrandColors, BackgroundColors, TextColors, AccentColors, Spacing, Typography, BorderRadius, Shadows } from '../../constants/brand';
 import { ChevronLeft, CreditCard, Wallet, Check } from '../../components/icons/AppIcons';
 
 interface PaymentMethodsScreenProps {
@@ -104,8 +104,8 @@ const styles = StyleSheet.create({
   sectionHeader: {
     color: TextColors.secondary,
     fontSize: Typography.fontSize.xs,
-    fontWeight: '600',
-    letterSpacing: 2,
+    fontFamily: Typography.fontFamily.semibold,
+    letterSpacing: Typography.letterSpacing.normal,
     marginBottom: Spacing.base,
   },
   cardRow: {
@@ -114,10 +114,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: BackgroundColors.cardBg,
     borderWidth: 1,
-    borderColor: AccentColors.border,
+    borderColor: AccentColors.borderLight,
     borderRadius: BorderRadius.base,
     padding: Spacing.base,
     marginBottom: Spacing.base,
+    minHeight: 56,
+    ...Shadows.sm,
   },
   cardInfo: {
     flex: 1,
@@ -129,7 +131,7 @@ const styles = StyleSheet.create({
   cardNumber: {
     color: TextColors.primary,
     fontSize: Typography.fontSize.base,
-    fontWeight: '500',
+    fontFamily: Typography.fontFamily.semibold,
     marginLeft: Spacing.sm,
   },
   cardDetails: {
@@ -142,13 +144,15 @@ const styles = StyleSheet.create({
   },
   addCardButton: {
     borderWidth: 1,
-    borderColor: AccentColors.border,
+    borderColor: AccentColors.borderLight,
     borderRadius: BorderRadius.base,
     padding: Spacing.base,
     alignItems: 'center',
-    minHeight: 52,
+    minHeight: 56,
     justifyContent: 'center',
     marginBottom: Spacing.xl,
+    backgroundColor: BackgroundColors.secondary,
+    ...Shadows.sm,
   },
   addCardButtonText: {
     color: TextColors.primary,
@@ -161,10 +165,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: BackgroundColors.cardBg,
     borderWidth: 1,
-    borderColor: AccentColors.border,
+    borderColor: AccentColors.borderLight,
     borderRadius: BorderRadius.base,
     padding: Spacing.base,
-    minHeight: 52,
+    minHeight: 56,
+    ...Shadows.sm,
   },
   walletNameRow: {
     flexDirection: 'row',
@@ -173,7 +178,7 @@ const styles = StyleSheet.create({
   walletName: {
     color: TextColors.primary,
     fontSize: Typography.fontSize.base,
-    fontWeight: '500',
+    fontFamily: Typography.fontFamily.semibold,
     marginLeft: Spacing.sm,
   },
   connectedRow: {

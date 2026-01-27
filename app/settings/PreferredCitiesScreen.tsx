@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { BrandColors, BackgroundColors, TextColors, AccentColors, Spacing, Typography, BorderRadius } from '../../constants/brand';
+import { BrandColors, BackgroundColors, TextColors, AccentColors, Spacing, Typography, BorderRadius, Shadows } from '../../constants/brand';
 import { ChevronLeft, Check } from '../../components/icons/AppIcons';
 import PrimaryButton from '../../components/buttons/PrimaryButton';
 
@@ -36,7 +36,7 @@ export default function PreferredCitiesScreen({ navigation }: PreferredCitiesScr
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text style={styles.backArrow}>←</Text>
+            <ChevronLeft size={24} color={TextColors.primary} strokeWidth={1.5} />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Preferred Cities</Text>
           <View style={styles.headerSpacer} />
@@ -102,12 +102,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: Spacing.base,
-  },
-  backArrow: {
-    color: TextColors.primary,
-    fontSize: Typography.fontSize.xl,
-    fontWeight: '300',
+    marginBottom: Spacing.xl,
   },
   headerTitle: {
     flex: 1,
@@ -136,8 +131,10 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
     borderRadius: BorderRadius.base,
     borderWidth: 1,
-    borderColor: AccentColors.border,
+    borderColor: AccentColors.borderLight,
     backgroundColor: BackgroundColors.cardBg,
+    minHeight: 56,
+    ...Shadows.sm,
   },
   cityRowSelected: {
     borderColor: AccentColors.primary,
@@ -146,6 +143,7 @@ const styles = StyleSheet.create({
   cityText: {
     color: TextColors.primary,
     fontSize: Typography.fontSize.base,
+    fontFamily: Typography.fontFamily.semibold,
   },
   cityTextSelected: {
     color: AccentColors.primary,

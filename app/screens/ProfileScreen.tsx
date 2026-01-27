@@ -312,9 +312,10 @@ const styles = StyleSheet.create({
     backgroundColor: BackgroundColors.cardBg,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: 'rgba(86, 132, 196, 0.08)',
+    borderColor: AccentColors.borderLight,
     marginBottom: Spacing.base,
     overflow: 'hidden',
+    ...Shadows.sm,
   },
   statItem: {
     flex: 1,
@@ -323,13 +324,14 @@ const styles = StyleSheet.create({
   },
   statValue: {
     color: TextColors.primary,
-    fontSize: 20,
-    fontWeight: '700',
+    fontSize: Typography.fontSize['2xl'],
+    fontFamily: Typography.fontFamily.bold,
   },
   statLabel: {
-    color: TextColors.tertiary,
-    fontSize: 11,
-    marginTop: 4,
+    color: TextColors.secondary,
+    fontSize: Typography.fontSize.xs,
+    fontFamily: Typography.fontFamily.regular,
+    marginTop: Spacing.xs,
   },
   statDivider: {
     width: 1,
@@ -356,8 +358,8 @@ const styles = StyleSheet.create({
   sectionHeader: {
     color: TextColors.secondary,
     fontSize: Typography.fontSize.xs,
-    fontWeight: '600',
-    letterSpacing: 2,
+    fontFamily: Typography.fontFamily.semibold,
+    letterSpacing: Typography.letterSpacing.normal,
     marginBottom: Spacing.base,
   },
   menuList: {
@@ -369,11 +371,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: BackgroundColors.cardBg,
     borderWidth: 1,
-    borderColor: 'rgba(86, 132, 196, 0.1)',
+    borderColor: AccentColors.borderLight,
     borderRadius: 12,
     padding: Spacing.base,
     minHeight: 56,
     marginBottom: Spacing.sm,
+    ...Shadows.sm,
   },
   menuItemLeft: {
     flexDirection: 'row',
@@ -382,7 +385,7 @@ const styles = StyleSheet.create({
   menuItemText: {
     color: TextColors.primary,
     fontSize: Typography.fontSize.base,
-    fontWeight: '500',
+    fontFamily: Typography.fontFamily.semibold,
     marginLeft: Spacing.base,
   },
   logOutButton: {

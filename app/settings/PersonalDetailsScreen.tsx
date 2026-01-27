@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Image, ActivityIndicator, Alert } from 'react-native';
-import { BrandColors, BackgroundColors, TextColors, AccentColors, Spacing, Typography, BorderRadius, StatusColors } from '../../constants/brand';
+import { BrandColors, BackgroundColors, TextColors, AccentColors, Spacing, Typography, BorderRadius, StatusColors, Shadows } from '../../constants/brand';
 import { ChevronLeft, Camera } from '../../components/icons/AppIcons';
 import PrimaryButton from '../../components/buttons/PrimaryButton';
 import { getUserProfile, updateUserProfile } from '../../src/services/api';
@@ -354,10 +354,11 @@ const styles = StyleSheet.create({
   messageContainer: {
     backgroundColor: BackgroundColors.cardBg,
     borderWidth: 1,
-    borderColor: AccentColors.border,
+    borderColor: AccentColors.borderLight,
     borderRadius: BorderRadius.base,
     padding: Spacing.base,
     marginBottom: Spacing.base,
+    ...Shadows.sm,
   },
   errorText: {
     color: StatusColors.cancelled,
@@ -375,16 +376,20 @@ const styles = StyleSheet.create({
   input: {
     backgroundColor: BackgroundColors.secondary,
     borderWidth: 1,
-    borderColor: AccentColors.border,
+    borderColor: AccentColors.borderLight,
     borderRadius: BorderRadius.base,
     padding: Spacing.base,
     color: TextColors.primary,
     fontSize: Typography.fontSize.base,
+    fontFamily: Typography.fontFamily.regular,
     marginBottom: Spacing.lg,
-    minHeight: 52,
+    minHeight: 56,
+    ...Shadows.sm,
   },
   inputFocused: {
     borderColor: AccentColors.primary,
+    borderWidth: 2,
+    ...Shadows.glow,
   },
   dropdownInput: {
     flexDirection: 'row',
@@ -394,6 +399,7 @@ const styles = StyleSheet.create({
   dropdownText: {
     color: TextColors.primary,
     fontSize: Typography.fontSize.base,
+    fontFamily: Typography.fontFamily.regular,
   },
   dropdownArrow: {
     color: TextColors.secondary,

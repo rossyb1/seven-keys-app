@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { BrandColors, BackgroundColors, TextColors, AccentColors, Spacing, Typography, BorderRadius } from '../../constants/brand';
+import { BrandColors, BackgroundColors, TextColors, AccentColors, Spacing, Typography, BorderRadius, Shadows } from '../../constants/brand';
 import { ChevronLeft } from '../../components/icons/AppIcons';
 
 interface NotificationSettingsScreenProps {
@@ -135,8 +135,8 @@ const styles = StyleSheet.create({
   sectionHeader: {
     color: TextColors.secondary,
     fontSize: Typography.fontSize.xs,
-    fontWeight: '600',
-    letterSpacing: 2,
+    fontFamily: Typography.fontFamily.semibold,
+    letterSpacing: Typography.letterSpacing.normal,
     marginBottom: Spacing.base,
   },
   toggleList: {
@@ -148,21 +148,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: BackgroundColors.cardBg,
     borderWidth: 1,
-    borderColor: AccentColors.border,
+    borderColor: AccentColors.borderLight,
     borderRadius: BorderRadius.base,
     padding: Spacing.base,
     marginBottom: Spacing.sm,
-    minHeight: 52,
+    minHeight: 56,
+    ...Shadows.sm,
   },
   toggleLabel: {
     color: TextColors.primary,
     fontSize: Typography.fontSize.base,
-    fontWeight: '500',
+    fontFamily: Typography.fontFamily.semibold,
   },
   toggle: {
-    width: 50,
-    height: 28,
-    borderRadius: 14,
+    width: 56,
+    height: 32,
+    borderRadius: 16,
     backgroundColor: BackgroundColors.secondary,
     borderWidth: 1,
     borderColor: AccentColors.border,
@@ -174,9 +175,9 @@ const styles = StyleSheet.create({
     borderColor: AccentColors.primary,
   },
   toggleThumb: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
     backgroundColor: TextColors.tertiary,
   },
   toggleThumbActive: {

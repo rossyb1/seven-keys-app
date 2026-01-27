@@ -264,14 +264,14 @@ const styles = StyleSheet.create({
   balanceLabel: {
     color: TextColors.secondary,
     fontSize: Typography.fontSize.xs,
-    fontWeight: '600',
-    letterSpacing: 2,
+    fontFamily: Typography.fontFamily.semibold,
+    letterSpacing: Typography.letterSpacing.normal,
     marginBottom: Spacing.sm,
   },
   balanceAmount: {
     color: AccentColors.primary,
-    fontSize: Typography.fontSize['3xl'],
-    fontWeight: '600',
+    fontSize: Typography.fontSize['5xl'],
+    fontFamily: Typography.fontFamily.bold,
     marginBottom: Spacing.xs / 2,
   },
   balanceUnit: {
@@ -292,8 +292,8 @@ const styles = StyleSheet.create({
   monthHeader: {
     color: TextColors.secondary,
     fontSize: Typography.fontSize.xs,
-    fontWeight: '600',
-    letterSpacing: 2,
+    fontFamily: Typography.fontFamily.semibold,
+    letterSpacing: Typography.letterSpacing.normal,
     marginBottom: Spacing.base,
   },
   loadingContainer: {
@@ -330,10 +330,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: BackgroundColors.cardBg,
     borderWidth: 1,
-    borderColor: AccentColors.border,
+    borderColor: AccentColors.borderLight,
     borderRadius: BorderRadius.base,
     padding: Spacing.base,
     marginBottom: Spacing.sm,
+    minHeight: 56,
+    ...Shadows.sm,
   },
   transactionIconContainer: {
     width: 40,
@@ -350,7 +352,7 @@ const styles = StyleSheet.create({
   transactionTitle: {
     color: TextColors.primary,
     fontSize: Typography.fontSize.base,
-    fontWeight: '500',
+    fontFamily: Typography.fontFamily.semibold,
     marginBottom: Spacing.xs / 2,
   },
   transactionDate: {
@@ -358,8 +360,8 @@ const styles = StyleSheet.create({
     fontSize: Typography.fontSize.sm,
   },
   transactionPoints: {
-    fontSize: Typography.fontSize.base,
-    fontWeight: '600',
+    fontSize: Typography.fontSize.lg,
+    fontFamily: Typography.fontFamily.bold,
   },
   transactionPointsPositive: {
     color: StatusColors.confirmed,
