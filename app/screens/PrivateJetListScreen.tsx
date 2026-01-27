@@ -23,21 +23,21 @@ const jets: JetService[] = [
     name: 'Light Jet',
     category: '6-8 passengers',
     description: 'Perfect for short to medium-haul flights',
-    thumbnail: require('../../Images/experiences-category.jpg'),
+    thumbnail: require('../../Images/private-jet.jpg'),
   },
   {
     id: 'midsize_jet',
     name: 'Midsize Jet',
     category: '8-9 passengers',
     description: 'Ideal for transcontinental travel',
-    thumbnail: require('../../Images/experiences-category.jpg'),
+    thumbnail: require('../../Images/private-jet.jpg'),
   },
   {
     id: 'heavy_jet',
     name: 'Heavy Jet',
     category: '12-16 passengers',
     description: 'Ultimate luxury for long-range international flights',
-    thumbnail: require('../../Images/experiences-category.jpg'),
+    thumbnail: require('../../Images/private-jet.jpg'),
   },
 ];
 
