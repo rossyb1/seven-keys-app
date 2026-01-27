@@ -32,10 +32,11 @@ const yachtsData: Record<string, YachtData> = {
     size: '70ft',
     description: 'Experience luxury on the water with our flagship 70ft yacht. Perfect for cruising Dubai\'s stunning coastline with family and friends.',
     images: [
-      require('../../Images/yachts/morrigan_03.jpeg'),
-      require('../../Images/yachts/morrigan_01.jpeg'),
-      require('../../Images/yachts/morrigan_02.jpeg'),
-      require('../../Images/yachts/morrigan_04.jpeg'),
+      require('../../Images/yachts/morrigan_cover.jpg'),
+      require('../../Images/yachts/morrigan_02.jpg'),
+      require('../../Images/yachts/morrigan_03.jpg'),
+      require('../../Images/yachts/morrigan_04.jpg'),
+      require('../../Images/yachts/morrigan_05.jpg'),
     ],
     details: {
       capacity: 'Up to 12 guests',

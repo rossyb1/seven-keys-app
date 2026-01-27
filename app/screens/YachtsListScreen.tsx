@@ -23,7 +23,7 @@ const yachts: Yacht[] = [
     name: 'Morrigan',
     size: '70ft',
     description: 'Luxury yacht perfect for cruising Dubai waters',
-    thumbnail: require('../../Images/yachts/morrigan_03.jpeg'),
+    thumbnail: require('../../Images/yachts/morrigan_cover.jpg'),
   },
   {
     id: 'matrix',
