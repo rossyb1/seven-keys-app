@@ -49,8 +49,8 @@ const categories: Category[] = [
     id: 'villas', 
     name: 'VILLAS', 
     image: require('../../Images/villas-category.jpg'), 
-    subtitle: 'Ibiza • Coming Soon', 
-    enabled: false 
+    subtitle: 'Ibiza & more', 
+    enabled: true 
   },
 ];
 
@@ -61,6 +61,8 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
     if (category.enabled) {
       if (category.id === 'experiences') {
         navigation.navigate('ExperiencesList');
+      } else if (category.id === 'villas') {
+        navigation.navigate('VillasList');
       } else {
         navigation.navigate('CategoryVenues', {
           categoryId: category.id,
