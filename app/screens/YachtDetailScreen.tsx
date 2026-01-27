@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -6,7 +6,9 @@ import {
   ScrollView,
   TouchableOpacity,
   Dimensions,
-  ImageBackground,
+  Modal,
+  FlatList,
+  StatusBar,
 } from 'react-native';
 import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -18,9 +20,10 @@ import {
   Star,
   Check,
   MessageCircle,
+  X,
 } from 'lucide-react-native';
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 interface YachtDetailScreenProps {
   navigation: any;
@@ -158,6 +161,9 @@ export default function YachtDetailScreen({ navigation, route }: YachtDetailScre
   const { yachtId } = route.params;
   const yacht = yachtsData[yachtId];
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [showFullscreen, setShowFullscreen] = useState(false);
+  const heroScrollRef = useRef<ScrollView>(null);
+  const fullscreenListRef = useRef<FlatList>(null);
 
   if (!yacht) {
     return (
@@ -178,6 +184,27 @@ export default function YachtDetailScreen({ navigation, route }: YachtDetailScre
     navigation.navigate('MessageConcierge', { yacht });
   };
 
+  const handleHeroScroll = (event: any) => {
+    const index = Math.round(event.nativeEvent.contentOffset.x / width);
+    if (index !== activeImageIndex) {
+      setActiveImageIndex(index);
+    }
+  };
+
+  const openFullscreen = (index: number) => {
+    setActiveImageIndex(index);
+    setShowFullscreen(true);
+  };
+
+  const handleFullscreenScroll = (event: any) => {
+    const index = Math.round(event.nativeEvent.contentOffset.x / width);
+    if (index !== activeImageIndex) {
+      setActiveImageIndex(index);
+      // Sync hero scroll position
+      heroScrollRef.current?.scrollTo({ x: index * width, animated: false });
+    }
+  };
+
   // Get yacht initial for logo
   const yachtInitial = yacht.name[0]?.toUpperCase() || 'Y';
 
@@ -188,56 +215,75 @@ export default function YachtDetailScreen({ navigation, route }: YachtDetailScre
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Hero Image Section */}
+        {/* Hero Image Section - Swipeable */}
         <View style={[styles.heroSection, { height: heroSectionHeight }]}>
-          <ImageBackground
-            source={yacht.images[activeImageIndex]}
-            style={styles.heroImage}
-            resizeMode="cover"
+          <ScrollView
+            ref={heroScrollRef}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            onMomentumScrollEnd={handleHeroScroll}
+            scrollEventThrottle={16}
           >
-            {/* Gradient Overlay */}
-            <LinearGradient
-              colors={['transparent', 'rgba(10, 22, 40, 0.6)', '#0A1628']}
-              locations={[0, 0.6, 1]}
-              style={styles.heroGradient}
-            />
+            {yacht.images.map((image, index) => (
+              <TouchableOpacity
+                key={index}
+                activeOpacity={0.95}
+                onPress={() => openFullscreen(index)}
+                style={{ width, height: heroSectionHeight }}
+              >
+                <Image
+                  source={image}
+                  style={{ width, height: heroSectionHeight }}
+                  contentFit="cover"
+                  cachePolicy="memory-disk"
+                />
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
 
-            {/* Back Button */}
-            <TouchableOpacity
-              style={[styles.backButton, { top: backButtonTop }]}
-              onPress={() => navigation.goBack()}
-              activeOpacity={0.7}
-            >
-              <View style={styles.backButtonCircle}>
-                <ChevronLeft size={20} color="#FFFFFF" strokeWidth={2} />
+          {/* Gradient Overlay */}
+          <LinearGradient
+            colors={['transparent', 'rgba(10, 22, 40, 0.6)', '#0A1628']}
+            locations={[0, 0.6, 1]}
+            style={styles.heroGradient}
+            pointerEvents="none"
+          />
+
+          {/* Back Button */}
+          <TouchableOpacity
+            style={[styles.backButton, { top: backButtonTop }]}
+            onPress={() => navigation.goBack()}
+            activeOpacity={0.7}
+          >
+            <View style={styles.backButtonCircle}>
+              <ChevronLeft size={20} color="#FFFFFF" strokeWidth={2} />
+            </View>
+          </TouchableOpacity>
+
+          {/* Yacht Info at Bottom */}
+          <View style={styles.yachtInfoContainer} pointerEvents="none">
+            <View style={styles.yachtInfoRow}>
+              <View style={styles.logoBox}>
+                <Text style={styles.logoText}>{yachtInitial}</Text>
               </View>
-            </TouchableOpacity>
-
-            {/* Yacht Info at Bottom */}
-            <View style={styles.yachtInfoContainer}>
-              <View style={styles.yachtInfoRow}>
-                <View style={styles.logoBox}>
-                  <Text style={styles.logoText}>{yachtInitial}</Text>
-                </View>
-                <View style={styles.yachtInfoText}>
-                  <Text style={styles.yachtName}>{yacht.name}</Text>
-                  <View style={styles.yachtMeta}>
-                    <Text style={styles.yachtType}>Luxury Yacht</Text>
-                    <Text style={styles.yachtSeparator}> • </Text>
-                    <Text style={styles.yachtSize}>{yacht.size}</Text>
-                  </View>
+              <View style={styles.yachtInfoText}>
+                <Text style={styles.yachtName}>{yacht.name}</Text>
+                <View style={styles.yachtMeta}>
+                  <Text style={styles.yachtType}>Luxury Yacht</Text>
+                  <Text style={styles.yachtSeparator}> • </Text>
+                  <Text style={styles.yachtSize}>{yacht.size}</Text>
                 </View>
               </View>
             </View>
-          </ImageBackground>
+          </View>
         </View>
 
         {/* Image Indicator */}
         <View style={styles.indicatorContainer}>
           {yacht.images.map((_, index) => (
-            <TouchableOpacity
+            <View
               key={index}
-              onPress={() => setActiveImageIndex(index)}
               style={[
                 styles.indicator,
                 activeImageIndex === index && styles.indicatorActive,
@@ -314,7 +360,7 @@ export default function YachtDetailScreen({ navigation, route }: YachtDetailScre
               {yacht.images.map((image, index) => (
                 <TouchableOpacity
                   key={index}
-                  onPress={() => setActiveImageIndex(index)}
+                  onPress={() => openFullscreen(index)}
                   activeOpacity={0.8}
                 >
                   <Image
@@ -350,6 +396,76 @@ export default function YachtDetailScreen({ navigation, route }: YachtDetailScre
           <Text style={styles.bookButtonText}>Request Booking</Text>
         </TouchableOpacity>
       </View>
+
+      {/* Fullscreen Gallery Modal */}
+      <Modal
+        visible={showFullscreen}
+        transparent={true}
+        animationType="fade"
+        statusBarTranslucent
+      >
+        <View style={styles.fullscreenContainer}>
+          <StatusBar barStyle="light-content" backgroundColor="black" />
+          
+          {/* Close Button */}
+          <TouchableOpacity
+            style={[styles.closeButton, { top: insets.top + 12 }]}
+            onPress={() => setShowFullscreen(false)}
+            activeOpacity={0.7}
+          >
+            <View style={styles.closeButtonCircle}>
+              <X size={22} color="#FFFFFF" strokeWidth={2} />
+            </View>
+          </TouchableOpacity>
+
+          {/* Image Counter */}
+          <View style={[styles.imageCounter, { top: insets.top + 20 }]}>
+            <Text style={styles.imageCounterText}>
+              {activeImageIndex + 1} / {yacht.images.length}
+            </Text>
+          </View>
+
+          {/* Fullscreen Images */}
+          <FlatList
+            ref={fullscreenListRef}
+            data={yacht.images}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            initialScrollIndex={activeImageIndex}
+            getItemLayout={(_, index) => ({
+              length: width,
+              offset: width * index,
+              index,
+            })}
+            onMomentumScrollEnd={handleFullscreenScroll}
+            keyExtractor={(_, index) => index.toString()}
+            renderItem={({ item }) => (
+              <View style={styles.fullscreenImageContainer}>
+                <Image
+                  source={item}
+                  style={styles.fullscreenImage}
+                  contentFit="contain"
+                  cachePolicy="memory-disk"
+                />
+              </View>
+            )}
+          />
+
+          {/* Bottom Indicator */}
+          <View style={[styles.fullscreenIndicator, { bottom: insets.bottom + 30 }]}>
+            {yacht.images.map((_, index) => (
+              <View
+                key={index}
+                style={[
+                  styles.indicator,
+                  activeImageIndex === index && styles.indicatorActive,
+                ]}
+              />
+            ))}
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -368,10 +484,6 @@ const styles = StyleSheet.create({
   heroSection: {
     width: '100%',
     overflow: 'hidden',
-  },
-  heroImage: {
-    width: '100%',
-    height: '100%',
   },
   heroGradient: {
     position: 'absolute',
@@ -600,5 +712,53 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
     marginTop: 40,
+  },
+  // Fullscreen Modal Styles
+  fullscreenContainer: {
+    flex: 1,
+    backgroundColor: 'black',
+    justifyContent: 'center',
+  },
+  closeButton: {
+    position: 'absolute',
+    left: 20,
+    zIndex: 10,
+  },
+  closeButtonCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  imageCounter: {
+    position: 'absolute',
+    right: 20,
+    zIndex: 10,
+  },
+  imageCounterText: {
+    fontSize: 16,
+    color: 'rgba(255, 255, 255, 0.8)',
+    fontWeight: '500',
+  },
+  fullscreenImageContainer: {
+    width: width,
+    height: height,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  fullscreenImage: {
+    width: width,
+    height: height * 0.7,
+  },
+  fullscreenIndicator: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 8,
   },
 });
