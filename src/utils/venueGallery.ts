@@ -18,7 +18,7 @@ export const venueGallery: Record<string, any[]> = {
     require('../../Images/nikkibeach-4.jpg'),
   ],
   'Nobu Beach': [
-    require('../../Images/nobubeach-1.jpg'),
+    require('../../Images/nobubeach-1.png'),
     require('../../Images/nobubeach-2.jpg'),
     require('../../Images/nobubeach-3.jpg'),
     require('../../Images/nobubeach-4.webp'),
