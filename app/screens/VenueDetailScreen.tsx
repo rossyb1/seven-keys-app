@@ -272,21 +272,6 @@ export default function VenueDetailScreen({ navigation, route }: VenueDetailScre
             </View>
           </View>
 
-          {/* Best For Card */}
-          <View style={styles.card}>
-            <Text style={styles.cardLabel}>BEST FOR</Text>
-            <View style={styles.pillsContainer}>
-              {(venue.vibe_tags && venue.vibe_tags.length > 0
-                ? venue.vibe_tags
-                : ['Date Night', 'Celebrations', 'Business']
-              ).map((tag, index) => (
-                <View key={index} style={styles.pill}>
-                  <Text style={styles.pillText}>{tag}</Text>
-                </View>
-              ))}
-            </View>
-          </View>
-
           {/* Member Benefits Card */}
           <View style={styles.benefitsCard}>
             <View style={styles.benefitsHeader}>
