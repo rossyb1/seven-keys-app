@@ -156,14 +156,8 @@ export default function VenueDetailScreen({ navigation, route }: VenueDetailScre
                     source={typeof item === 'string' ? { uri: item } : item}
                     style={[styles.heroImage, { width: SCREEN_WIDTH }]}
                     resizeMode="cover"
-                  >
-                    <LinearGradient
-                      colors={['transparent', '#0A1628']}
-                      start={{ x: 0, y: 1 }}
-                      end={{ x: 0, y: 0 }}
-                      style={styles.heroGradient}
-                    />
-                  </ImageBackground>
+                  />
+                  
                 )}
               />
               
