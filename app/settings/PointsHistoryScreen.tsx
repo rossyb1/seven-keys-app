@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { BrandColors, BackgroundColors, TextColors, AccentColors, Spacing, Typography, BorderRadius, StatusColors } from '../../constants/brand';
+import { BrandColors, BackgroundColors, TextColors, AccentColors, Spacing, Typography, BorderRadius, StatusColors, Shadows } from '../../constants/brand';
 import { ChevronLeft, Check, Users, Heart, Edit, CreditCard } from '../../components/icons/AppIcons';
 import { getPointsHistory } from '../../src/services/api';
 import { getUserProfile } from '../../src/services/api';

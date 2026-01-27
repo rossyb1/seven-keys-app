@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, StatusBar, Activi
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { User, CreditCard, MapPin, Bell, BarChart3, MessageCircle, HelpCircle, LogOut, Trash2, ChevronRight } from 'lucide-react-native';
-import { BrandColors, BackgroundColors, TextColors, AccentColors, Spacing, Typography, BorderRadius } from '../../constants/brand';
+import { BrandColors, BackgroundColors, TextColors, AccentColors, Spacing, Typography, BorderRadius, Shadows } from '../../constants/brand';
 import { getUserProfile, signOut } from '../../src/services/api';
 import { useAuth } from '../../src/contexts/AuthContext';
 import type { User as UserType } from '../../src/types/database';
