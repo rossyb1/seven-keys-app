@@ -99,7 +99,9 @@ export default function ExperiencesListScreen({ navigation }: ExperiencesListScr
                   imageStyle={styles.categoryImage}
                 >
                   <LinearGradient
-                    colors={['rgba(10, 22, 40, 0.3)', 'rgba(10, 22, 40, 0.8)']}
+                    colors={['rgba(9, 22, 46, 0.85)', 'rgba(9, 22, 46, 0.4)', 'transparent']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
                     style={styles.gradient}
                   >
                     <View style={styles.iconContainer}>
