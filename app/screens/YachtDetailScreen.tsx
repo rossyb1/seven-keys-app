@@ -1,9 +1,24 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Dimensions,
+  ImageBackground,
+} from 'react-native';
 import { Image } from 'expo-image';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { ChevronLeft } from 'lucide-react-native';
-import PrimaryButton from '../../components/buttons/PrimaryButton';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
+import {
+  ChevronLeft,
+  Users,
+  Anchor,
+  Star,
+  Check,
+  MessageCircle,
+} from 'lucide-react-native';
 
 const { width } = Dimensions.get('window');
 
@@ -125,73 +140,104 @@ const yachtsData: Record<string, YachtData> = {
       capacity: 'Up to 8 guests',
       crew: 'Professional captain & crew',
       amenities: [
-        'Modern deck layout',
-        'Air-conditioned cabin',
-        'Quality audio system',
-        'Water sports equipment',
-        'Light refreshments available',
+        'Gourmet Dining',
+        'Premium Beverages',
+        'Special Occasions & Celebrations',
+        'Water Sports',
+        'Entertainment & Media',
+        'Tailored Corporate Events',
+        'Wellness & Relaxation',
+        'Floating Cinema',
       ],
     },
   },
 };
 
 export default function YachtDetailScreen({ navigation, route }: YachtDetailScreenProps) {
+  const insets = useSafeAreaInsets();
   const { yachtId } = route.params;
   const yacht = yachtsData[yachtId];
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
   if (!yacht) {
     return (
-      <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
         <Text style={styles.errorText}>Yacht not found</Text>
-      </SafeAreaView>
+      </View>
     );
   }
+
+  const backButtonTop = insets.top + 12;
+  const heroSectionHeight = 280 + insets.top;
 
   const handleBooking = () => {
     navigation.navigate('ExperienceTypeSelection');
   };
 
+  const handleConcierge = () => {
+    navigation.navigate('MessageConcierge', { yacht });
+  };
+
+  // Get yacht initial for logo
+  const yachtInitial = yacht.name[0]?.toUpperCase() || 'Y';
+
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <View style={styles.container}>
       <ScrollView
         style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-            <ChevronLeft size={24} color="#FFFFFF" strokeWidth={1.5} />
-          </TouchableOpacity>
-        </View>
-
-        {/* Image Gallery */}
-        <ScrollView
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          onMomentumScrollEnd={(e) => {
-            const index = Math.round(e.nativeEvent.contentOffset.x / width);
-            setActiveImageIndex(index);
-          }}
-          style={styles.imageGallery}
-        >
-          {yacht.images.map((image, index) => (
-            <Image
-              key={index}
-              source={image}
-              style={styles.yachtImage}
-              contentFit="cover"
-              cachePolicy="memory-disk"
+        {/* Hero Image Section */}
+        <View style={[styles.heroSection, { height: heroSectionHeight }]}>
+          <ImageBackground
+            source={yacht.images[activeImageIndex]}
+            style={styles.heroImage}
+            resizeMode="cover"
+          >
+            {/* Gradient Overlay */}
+            <LinearGradient
+              colors={['transparent', 'rgba(10, 22, 40, 0.6)', '#0A1628']}
+              locations={[0, 0.6, 1]}
+              style={styles.heroGradient}
             />
-          ))}
-        </ScrollView>
+
+            {/* Back Button */}
+            <TouchableOpacity
+              style={[styles.backButton, { top: backButtonTop }]}
+              onPress={() => navigation.goBack()}
+              activeOpacity={0.7}
+            >
+              <View style={styles.backButtonCircle}>
+                <ChevronLeft size={20} color="#FFFFFF" strokeWidth={2} />
+              </View>
+            </TouchableOpacity>
+
+            {/* Yacht Info at Bottom */}
+            <View style={styles.yachtInfoContainer}>
+              <View style={styles.yachtInfoRow}>
+                <View style={styles.logoBox}>
+                  <Text style={styles.logoText}>{yachtInitial}</Text>
+                </View>
+                <View style={styles.yachtInfoText}>
+                  <Text style={styles.yachtName}>{yacht.name}</Text>
+                  <View style={styles.yachtMeta}>
+                    <Text style={styles.yachtType}>Luxury Yacht</Text>
+                    <Text style={styles.yachtSeparator}> • </Text>
+                    <Text style={styles.yachtSize}>{yacht.size}</Text>
+                  </View>
+                </View>
+              </View>
+            </View>
+          </ImageBackground>
+        </View>
 
         {/* Image Indicator */}
         <View style={styles.indicatorContainer}>
           {yacht.images.map((_, index) => (
-            <View
+            <TouchableOpacity
               key={index}
+              onPress={() => setActiveImageIndex(index)}
               style={[
                 styles.indicator,
                 activeImageIndex === index && styles.indicatorActive,
@@ -200,48 +246,111 @@ export default function YachtDetailScreen({ navigation, route }: YachtDetailScre
           ))}
         </View>
 
-        {/* Yacht Info */}
-        <View style={styles.content}>
-          <View style={styles.headerInfo}>
-            <Text style={styles.yachtName}>{yacht.name}</Text>
-            <Text style={styles.yachtSize}>{yacht.size}</Text>
-          </View>
-
-          <Text style={styles.description}>{yacht.description}</Text>
-
-          {/* Details */}
-          <View style={styles.detailsSection}>
-            <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Capacity:</Text>
-              <Text style={styles.detailValue}>{yacht.details.capacity}</Text>
-            </View>
-            <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Crew:</Text>
-              <Text style={styles.detailValue}>{yacht.details.crew}</Text>
-            </View>
-          </View>
-
-          {/* Amenities */}
-          <View style={styles.amenitiesSection}>
-            <Text style={styles.sectionTitle}>Amenities</Text>
-            {yacht.details.amenities.map((amenity, index) => (
-              <View key={index} style={styles.amenityItem}>
-                <View style={styles.amenityDot} />
-                <Text style={styles.amenityText}>{amenity}</Text>
+        {/* Content Section */}
+        <View style={styles.contentSection}>
+          {/* Quick Info Card */}
+          <View style={styles.card}>
+            <View style={styles.infoRow}>
+              <View style={styles.infoRowLeft}>
+                <Users size={16} color="#5684C4" strokeWidth={1.5} />
+                <Text style={styles.infoText}>{yacht.details.capacity}</Text>
               </View>
-            ))}
+            </View>
+            <View style={styles.infoRowDivider} />
+            <View style={styles.infoRow}>
+              <View style={styles.infoRowLeft}>
+                <Anchor size={16} color="#5684C4" strokeWidth={1.5} />
+                <Text style={styles.infoText}>{yacht.details.crew}</Text>
+              </View>
+            </View>
           </View>
 
-          {/* Book Button */}
-          <View style={styles.buttonContainer}>
-            <PrimaryButton
-              title="REQUEST BOOKING"
-              onPress={handleBooking}
-            />
+          {/* Member Benefits Card */}
+          <View style={styles.card}>
+            <View style={styles.benefitsHeader}>
+              <Star size={16} color="#C9A96E" fill="#C9A96E" strokeWidth={1.5} />
+              <Text style={styles.benefitsLabel}>MEMBER BENEFITS</Text>
+            </View>
+            <View style={styles.benefitItem}>
+              <Check size={16} color="#5684C4" strokeWidth={2} />
+              <Text style={styles.benefitText}>Priority booking</Text>
+            </View>
+            <View style={styles.benefitItem}>
+              <Check size={16} color="#5684C4" strokeWidth={2} />
+              <Text style={styles.benefitText}>Complimentary welcome drinks</Text>
+            </View>
+            <View style={styles.benefitItem}>
+              <Check size={16} color="#5684C4" strokeWidth={2} />
+              <Text style={styles.benefitText}>Dedicated concierge service</Text>
+            </View>
+          </View>
+
+          {/* Onboard Experiences Card */}
+          <View style={styles.card}>
+            <Text style={styles.cardLabel}>ONBOARD EXPERIENCES</Text>
+            <View style={styles.pillsContainer}>
+              {yacht.details.amenities.map((amenity, index) => (
+                <View key={index} style={styles.pill}>
+                  <Text style={styles.pillText}>{amenity}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+
+          {/* About Card */}
+          <View style={styles.card}>
+            <Text style={styles.cardLabel}>ABOUT</Text>
+            <Text style={styles.aboutText}>{yacht.description}</Text>
+          </View>
+
+          {/* Gallery Preview Card */}
+          <View style={styles.card}>
+            <Text style={styles.cardLabel}>GALLERY</Text>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.galleryScroll}
+            >
+              {yacht.images.map((image, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => setActiveImageIndex(index)}
+                  activeOpacity={0.8}
+                >
+                  <Image
+                    source={image}
+                    style={[
+                      styles.galleryThumb,
+                      activeImageIndex === index && styles.galleryThumbActive,
+                    ]}
+                    contentFit="cover"
+                    cachePolicy="memory-disk"
+                  />
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
           </View>
         </View>
       </ScrollView>
-    </SafeAreaView>
+
+      {/* Bottom CTA */}
+      <View style={[styles.bottomCTA, { paddingBottom: insets.bottom + 16 }]}>
+        <TouchableOpacity
+          style={styles.conciergeButton}
+          onPress={handleConcierge}
+          activeOpacity={0.7}
+        >
+          <MessageCircle size={20} color="#5684C4" strokeWidth={1.5} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.bookButton}
+          onPress={handleBooking}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.bookButtonText}>Request Booking</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 }
 
@@ -253,35 +362,92 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
   },
-  header: {
+  scrollContent: {
+    paddingBottom: 120,
+  },
+  heroSection: {
+    width: '100%',
+    overflow: 'hidden',
+  },
+  heroImage: {
+    width: '100%',
+    height: '100%',
+  },
+  heroGradient: {
     position: 'absolute',
-    top: 0,
     left: 0,
     right: 0,
-    zIndex: 10,
-    paddingHorizontal: 20,
-    paddingVertical: 16,
+    bottom: 0,
+    height: '100%',
   },
   backButton: {
+    position: 'absolute',
+    left: 20,
+    zIndex: 10,
+  },
+  backButtonCircle: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: 'rgba(10, 22, 40, 0.8)',
+    backgroundColor: 'rgba(10, 22, 40, 0.6)',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  imageGallery: {
-    height: 400,
+  yachtInfoContainer: {
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    right: 20,
   },
-  yachtImage: {
-    width: width,
-    height: 400,
+  yachtInfoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  logoBox: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    backgroundColor: 'rgba(10, 22, 40, 0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 14,
+  },
+  logoText: {
+    fontSize: 22,
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
+  yachtInfoText: {
+    flex: 1,
+  },
+  yachtName: {
+    fontSize: 26,
+    fontWeight: '600',
+    color: '#FFFFFF',
+    marginBottom: 2,
+  },
+  yachtMeta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  yachtType: {
+    fontSize: 14,
+    color: 'rgba(255, 255, 255, 0.7)',
+  },
+  yachtSeparator: {
+    fontSize: 14,
+    color: 'rgba(255, 255, 255, 0.4)',
+  },
+  yachtSize: {
+    fontSize: 14,
+    color: '#C9A96E',
+    fontWeight: '500',
   },
   indicatorContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 16,
+    paddingVertical: 12,
     gap: 8,
   },
   indicator: {
@@ -294,77 +460,140 @@ const styles = StyleSheet.create({
     backgroundColor: '#5684C4',
     width: 24,
   },
-  content: {
+  contentSection: {
     paddingHorizontal: 20,
-    paddingBottom: 100,
   },
-  headerInfo: {
+  card: {
+    backgroundColor: 'rgba(255, 255, 255, 0.04)',
+    borderRadius: 16,
+    padding: 18,
+    marginBottom: 14,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.06)',
+  },
+  cardLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: 'rgba(255, 255, 255, 0.5)',
+    letterSpacing: 1,
+    marginBottom: 12,
+  },
+  infoRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 16,
+    paddingVertical: 4,
   },
-  yachtName: {
-    fontSize: 32,
+  infoRowLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  infoText: {
+    fontSize: 15,
+    color: 'rgba(255, 255, 255, 0.85)',
+  },
+  infoRowDivider: {
+    height: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    marginVertical: 12,
+  },
+  benefitsHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 14,
+  },
+  benefitsLabel: {
+    fontSize: 12,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: '#C9A96E',
+    letterSpacing: 1,
   },
-  yachtSize: {
-    fontSize: 20,
-    fontWeight: '500',
-    color: '#5684C4',
+  benefitItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 10,
   },
-  description: {
-    fontSize: 16,
-    color: 'rgba(255, 255, 255, 0.8)',
+  benefitText: {
+    fontSize: 15,
+    color: 'rgba(255, 255, 255, 0.85)',
+  },
+  pillsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+  },
+  pill: {
+    backgroundColor: 'rgba(86, 132, 196, 0.15)',
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(86, 132, 196, 0.25)',
+  },
+  pillText: {
+    fontSize: 13,
+    color: 'rgba(255, 255, 255, 0.85)',
+  },
+  aboutText: {
+    fontSize: 15,
+    color: 'rgba(255, 255, 255, 0.75)',
     lineHeight: 24,
-    marginBottom: 24,
   },
-  detailsSection: {
-    marginBottom: 24,
+  galleryScroll: {
+    marginTop: 4,
+    marginHorizontal: -4,
   },
-  detailRow: {
+  galleryThumb: {
+    width: 100,
+    height: 70,
+    borderRadius: 10,
+    marginHorizontal: 4,
+    opacity: 0.7,
+  },
+  galleryThumbActive: {
+    opacity: 1,
+    borderWidth: 2,
+    borderColor: '#5684C4',
+  },
+  bottomCTA: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    backgroundColor: '#0A1628',
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255, 255, 255, 0.08)',
+    gap: 12,
   },
-  detailLabel: {
+  conciergeButton: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: 'rgba(86, 132, 196, 0.15)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(86, 132, 196, 0.3)',
+  },
+  bookButton: {
+    flex: 1,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: '#5684C4',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  bookButtonText: {
     fontSize: 16,
-    fontWeight: '500',
-    color: 'rgba(255, 255, 255, 0.6)',
-    width: 100,
-  },
-  detailValue: {
-    fontSize: 16,
-    color: '#FFFFFF',
-  },
-  amenitiesSection: {
-    marginBottom: 32,
-  },
-  sectionTitle: {
-    fontSize: 20,
     fontWeight: '600',
     color: '#FFFFFF',
-    marginBottom: 16,
-  },
-  amenityItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  amenityDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: '#5684C4',
-    marginRight: 12,
-  },
-  amenityText: {
-    fontSize: 16,
-    color: 'rgba(255, 255, 255, 0.8)',
-  },
-  buttonContainer: {
-    marginTop: 8,
   },
   errorText: {
     color: '#FFFFFF',
