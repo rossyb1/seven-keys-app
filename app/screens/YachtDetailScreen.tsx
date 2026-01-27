@@ -37,6 +37,7 @@ const yachtsData: Record<string, YachtData> = {
       require('../../Images/yachts/morrigan_03.jpg'),
       require('../../Images/yachts/morrigan_04.jpg'),
       require('../../Images/yachts/morrigan_05.jpg'),
+      require('../../Images/yachts/morrigan_06.jpg'),
     ],
     details: {
       capacity: 'Up to 12 guests',
