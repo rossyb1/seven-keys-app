@@ -9,7 +9,7 @@ const venueImages: Record<string, any> = {
   'Surf Club': require('../../Images/surfclub-1.jpg'),
   'Tattu Skypool': require('../../Images/tattu-1.webp'),
   'Tattu Restaurant': require('../../Images/tattu-rest.png'),
-  'Verde Beach': require('../../Images/verdebeach.png'),
+  'Verde Beach': require('../../Images/verdebeach-1.jpg'),
   'Verde Dubai': require('../../Images/verde-dubai.png'),
   'Gal': require('../../Images/gal.png'),
   'Urla': require('../../Images/urla.png'),
