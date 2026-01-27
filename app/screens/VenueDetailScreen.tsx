@@ -202,13 +202,6 @@ export default function VenueDetailScreen({ navigation, route }: VenueDetailScre
                   </View>
                   <View style={styles.venueInfoText}>
                     <Text style={styles.venueName}>{venue.name}</Text>
-                    <View style={styles.venueMeta}>
-                      <Text style={styles.venueType}>{formatVenueType(venue.type)}</Text>
-                      <Text style={styles.venueSeparator}> • </Text>
-                      <Text style={styles.priceIndicator}>
-                        {getPriceIndicator(venue.minimum_spend)}
-                      </Text>
-                    </View>
                   </View>
                 </View>
               </View>
@@ -239,13 +232,6 @@ export default function VenueDetailScreen({ navigation, route }: VenueDetailScre
                     </View>
                     <View style={styles.venueInfoText}>
                       <Text style={styles.venueName}>{venue.name}</Text>
-                      <View style={styles.venueMeta}>
-                        <Text style={styles.venueType}>{formatVenueType(venue.type)}</Text>
-                        <Text style={styles.venueSeparator}> • </Text>
-                        <Text style={styles.priceIndicator}>
-                          {getPriceIndicator(venue.minimum_spend)}
-                        </Text>
-                      </View>
                     </View>
                   </View>
                 </View>
