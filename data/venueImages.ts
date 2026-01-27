@@ -17,7 +17,7 @@ export const venueImages: Record<string, any> = {
   'nobu-beach': require('../Images/nobubeach.png'),
   'be-beach': require('../Images/bebeach-1.webp'),
   'surfclub': require('../Images/Surfclub.png'),
-  'drift': require('../Images/Drift.png'),
+  'drift': require('../Images/drift-1.jpg'),
   'tattu-skypool': require('../Images/tattu-skypool.png'),
 };
 

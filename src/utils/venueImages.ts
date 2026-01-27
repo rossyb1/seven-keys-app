@@ -5,7 +5,7 @@ const venueImages: Record<string, any> = {
   'Nikki Beach': require('../../Images/bebeach.png'), // use similar for now
   'Hakkasan': require('../../Images/hakkasan.png'),
   'Nobu Beach': require('../../Images/nobubeach.png'),
-  'Drift': require('../../Images/Drift.png'),
+  'Drift': require('../../Images/drift-1.jpg'),
   'Surf Club': require('../../Images/Surfclub.png'),
   'Tattu Skypool': require('../../Images/tattu-skypool.png'),
   'Tattu Restaurant': require('../../Images/tattu-rest.png'),
