@@ -23,21 +23,21 @@ const services: ChauffeurService[] = [
     name: 'Luxury Sedan',
     vehicle: 'Mercedes S-Class',
     description: 'Premium chauffeur service for business and leisure',
-    thumbnail: require('../../Images/experiences-category.jpg'),
+    thumbnail: require('../../Images/chauffeur.jpg'),
   },
   {
     id: 'suv_service',
     name: 'Luxury SUV',
     vehicle: 'Range Rover Autobiography',
     description: 'Spacious luxury transport for families and groups',
-    thumbnail: require('../../Images/experiences-category.jpg'),
+    thumbnail: require('../../Images/chauffeur.jpg'),
   },
   {
     id: 'executive_van',
     name: 'Executive Van',
     vehicle: 'Mercedes V-Class',
     description: 'Perfect for corporate events and airport transfers',
-    thumbnail: require('../../Images/experiences-category.jpg'),
+    thumbnail: require('../../Images/chauffeur.jpg'),
   },
 ];
 
