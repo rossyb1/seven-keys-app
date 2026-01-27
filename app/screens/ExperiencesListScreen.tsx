@@ -49,11 +49,21 @@ const experienceCategories: ExperienceCategory[] = [
 
 export default function ExperiencesListScreen({ navigation }: ExperiencesListScreenProps) {
   const handleExperiencePress = (experienceId: string) => {
-    if (experienceId === 'yachts') {
-      navigation.navigate('YachtsList');
-    } else {
-      // For now, other categories go to concierge
-      navigation.navigate('ExperienceTypeSelection');
+    switch (experienceId) {
+      case 'yachts':
+        navigation.navigate('YachtsList');
+        break;
+      case 'desert':
+        navigation.navigate('DesertExperiencesList');
+        break;
+      case 'chauffeur':
+        navigation.navigate('ChauffeurList');
+        break;
+      case 'private_jet':
+        navigation.navigate('PrivateJetList');
+        break;
+      default:
+        navigation.navigate('ExperienceTypeSelection');
     }
   };
 

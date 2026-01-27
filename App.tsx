@@ -19,6 +19,9 @@ import YachtsListScreen from './app/screens/YachtsListScreen';
 import YachtDetailScreen from './app/screens/YachtDetailScreen';
 import VillasListScreen from './app/screens/VillasListScreen';
 import VillaDetailScreen from './app/screens/VillaDetailScreen';
+import DesertExperiencesListScreen from './app/screens/DesertExperiencesListScreen';
+import ChauffeurListScreen from './app/screens/ChauffeurListScreen';
+import PrivateJetListScreen from './app/screens/PrivateJetListScreen';
 import SelectDateScreen from './app/booking/SelectDateScreen';
 import SelectTimeScreen from './app/booking/SelectTimeScreen';
 import PartySizeScreen from './app/booking/PartySizeScreen';
@@ -94,6 +97,9 @@ function AppStack() {
       <Stack.Screen name="YachtDetail" component={YachtDetailScreen} />
       <Stack.Screen name="VillasList" component={VillasListScreen} />
       <Stack.Screen name="VillaDetail" component={VillaDetailScreen} />
+      <Stack.Screen name="DesertExperiencesList" component={DesertExperiencesListScreen} />
+      <Stack.Screen name="ChauffeurList" component={ChauffeurListScreen} />
+      <Stack.Screen name="PrivateJetList" component={PrivateJetListScreen} />
       <Stack.Screen name="SelectDate" component={SelectDateScreen} />
       <Stack.Screen name="SelectTime" component={SelectTimeScreen} />
       <Stack.Screen name="PartySize" component={PartySizeScreen} />
