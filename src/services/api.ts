@@ -1,5 +1,6 @@
 import { supabase } from '../lib/supabase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Crypto from 'expo-crypto';
 import type { User, Venue, Booking, WaitlistEntry } from '../types/database';
 
 // ============================================================================
@@ -206,8 +207,8 @@ export async function createUser(userData: {
     }
 
     // Generate a cryptographically secure random password
-    // Uses crypto.randomUUID() which is more secure than Math.random()
-    const randomPassword = `${crypto.randomUUID()}${crypto.randomUUID()}`.replace(/-/g, '').slice(0, 24) + 'Aa1!';
+    // Uses expo-crypto which is properly supported in React Native
+    const randomPassword = `${Crypto.randomUUID()}${Crypto.randomUUID()}`.replace(/-/g, '').slice(0, 24) + 'Aa1!';
 
     // REMOVED: Pre-check for existing email
     // This was blocking legitimate signups. We'll let the database constraints handle duplicates.

@@ -1,6 +1,5 @@
-// Polyfills must be first!
-import 'react-native-get-random-values';
-import 'react-native-url-polyfill/auto';
+// Polyfills must be first - before ANY other imports!
+import './src/polyfills';
 
 import { registerRootComponent } from 'expo';
 
