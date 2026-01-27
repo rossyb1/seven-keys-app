@@ -4,7 +4,7 @@ const venueImages: Record<string, any> = {
   'Zuma': require('../../Images/lingling.png'), // use placeholder for now
   'Nikki Beach': require('../../Images/nikkibeach-1.jpg'),
   'Hakkasan': require('../../Images/hakkasan.png'),
-  'Nobu Beach': require('../../Images/nobubeach.png'),
+  'Nobu Beach': require('../../Images/nobubeach-1.jpg'),
   'Drift': require('../../Images/drift-1.jpg'),
   'Surf Club': require('../../Images/Surfclub.png'),
   'Tattu Skypool': require('../../Images/tattu-skypool.png'),
