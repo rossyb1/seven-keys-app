@@ -22,28 +22,28 @@ const experienceCategories: ExperienceCategory[] = [
     name: 'YACHTS',
     subtitle: 'Luxury yacht charters',
     icon: Anchor,
-    image: require('../../Images/experiences-category.jpg'), // We'll use this for now
+    image: require('../../Images/experiences-category.jpg'),
   },
   {
     id: 'desert',
     name: 'DESERT EXPERIENCES',
     subtitle: 'Dubai desert adventures',
     icon: Palmtree,
-    image: require('../../Images/experiences-category.jpg'),
+    image: require('../../Images/desert-buggy.jpg'),
   },
   {
     id: 'chauffeur',
     name: 'PRIVATE CHAUFFEUR',
     subtitle: 'Professional drivers',
     icon: Car,
-    image: require('../../Images/experiences-category.jpg'),
+    image: require('../../Images/chauffeur.jpg'),
   },
   {
     id: 'private_jet',
     name: 'PRIVATE JET',
     subtitle: 'Exclusive travel',
     icon: Plane,
-    image: require('../../Images/experiences-category.jpg'),
+    image: require('../../Images/private-jet.jpg'),
   },
 ];
 
