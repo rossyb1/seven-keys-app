@@ -5,6 +5,7 @@ export const venueLogos: Record<string, any> = {
   'Nikki Beach': require('../../Images/logo-nikkibeach.png'),
   'Nobu Beach': require('../../Images/logo-nobubeach.png'),
   'Surf Club': require('../../Images/logo-surfclub.jpg'),
+  'Tattu Skypool': require('../../Images/logo-tattu.png'),
 };
 
 export const getVenueLogo = (venueName: string): any | null => {

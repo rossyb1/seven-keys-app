@@ -30,6 +30,12 @@ export const venueGallery: Record<string, any[]> = {
     require('../../Images/surfclub-3.jpg'),
     require('../../Images/surfclub-4.jpg'),
   ],
+  'Tattu Skypool': [
+    require('../../Images/tattu-1.webp'),
+    require('../../Images/tattu-2.webp'),
+    require('../../Images/tattu-3.jpg'),
+    require('../../Images/tattu-4.jpg'),
+  ],
 };
 
 export const getVenueGallery = (venueName: string): any[] | null => {

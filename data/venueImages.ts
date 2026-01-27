@@ -18,7 +18,7 @@ export const venueImages: Record<string, any> = {
   'be-beach': require('../Images/bebeach-1.webp'),
   'surfclub': require('../Images/surfclub-1.jpg'),
   'drift': require('../Images/drift-1.jpg'),
-  'tattu-skypool': require('../Images/tattu-skypool.png'),
+  'tattu-skypool': require('../Images/tattu-1.webp'),
 };
 
 export const getVenueImage = (venueId: string): any => {
