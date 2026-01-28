@@ -70,7 +70,7 @@ export default function SevenKCardScreen({ navigation }: SevenKCardScreenProps) 
     if (!user) return null;
 
     const currentTier = user.tier;
-    const currentPoints = user.points_balance;
+    const currentPoints = user.points_balance || 0;
 
     // If already at Black tier, no progress needed
     if (currentTier === 'black') {
@@ -84,17 +84,17 @@ export default function SevenKCardScreen({ navigation }: SevenKCardScreenProps) 
     switch (currentTier) {
       case 'blue':
         nextTier = 'silver';
-        currentThreshold = TIER_THRESHOLDS.member;
-        nextThreshold = TIER_THRESHOLDS.select;
+        currentThreshold = TIER_THRESHOLDS.blue;
+        nextThreshold = TIER_THRESHOLDS.silver;
         break;
       case 'silver':
         nextTier = 'gold';
-        currentThreshold = TIER_THRESHOLDS.select;
-        nextThreshold = TIER_THRESHOLDS.elite;
+        currentThreshold = TIER_THRESHOLDS.silver;
+        nextThreshold = TIER_THRESHOLDS.gold;
         break;
       case 'gold':
         nextTier = 'black';
-        currentThreshold = TIER_THRESHOLDS.elite;
+        currentThreshold = TIER_THRESHOLDS.gold;
         nextThreshold = TIER_THRESHOLDS.black;
         break;
       default:
@@ -102,8 +102,8 @@ export default function SevenKCardScreen({ navigation }: SevenKCardScreenProps) 
     }
 
     const pointsNeeded = nextThreshold - currentThreshold;
-    const pointsProgress = currentPoints - currentThreshold;
-    const progressPercentage = Math.min((pointsProgress / pointsNeeded) * 100, 100);
+    const pointsProgress = Math.max(0, currentPoints - currentThreshold);
+    const progressPercentage = pointsNeeded > 0 ? Math.min((pointsProgress / pointsNeeded) * 100, 100) : 0;
 
     return {
       currentTier,
@@ -281,120 +281,124 @@ export default function SevenKCardScreen({ navigation }: SevenKCardScreenProps) 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: BackgroundColors.primary,
+    backgroundColor: '#0A1628',
   },
   content: {
     flex: 1,
-    paddingTop: Spacing.xl,
-    paddingHorizontal: Spacing.xl,
+    paddingTop: 24,
+    paddingHorizontal: 20,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: Spacing.xl,
+    marginBottom: 24,
   },
   headerTitle: {
     flex: 1,
-    color: TextColors.primary,
-    fontSize: Typography.fontSize.xl,
+    color: '#FFFFFF',
+    fontSize: 18,
     fontWeight: '600',
     textAlign: 'center',
+    letterSpacing: 0.3,
   },
   headerSpacer: {
     width: 24,
   },
   cardContainer: {
     alignItems: 'center',
-    marginBottom: Spacing.xl,
+    marginBottom: 20,
   },
   statsRow: {
     flexDirection: 'row',
-    marginBottom: Spacing.xl * 2,
+    marginBottom: 20,
+    gap: 12,
   },
   statsSpacer: {
-    width: Spacing.base,
+    width: 12,
   },
   actionsSection: {
-    marginBottom: Spacing.xl,
+    marginBottom: 16,
   },
   loadingContainer: {
     alignItems: 'center',
-    paddingVertical: Spacing.xl * 2,
+    paddingVertical: 48,
   },
   errorContainer: {
     alignItems: 'center',
-    paddingVertical: Spacing.xl * 2,
+    paddingVertical: 48,
   },
   errorText: {
-    color: TextColors.secondary,
-    fontSize: Typography.fontSize.base,
+    color: 'rgba(255,255,255,0.6)',
+    fontSize: 14,
   },
   progressSection: {
-    backgroundColor: BackgroundColors.cardBg,
+    backgroundColor: 'rgba(255,255,255,0.03)',
     borderWidth: 1,
-    borderColor: AccentColors.border,
-    borderRadius: BorderRadius.base,
-    padding: Spacing.xl,
-    marginBottom: Spacing.xl,
+    borderColor: 'rgba(255,255,255,0.06)',
+    borderRadius: 12,
+    padding: 20,
+    marginBottom: 20,
   },
   progressHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: Spacing.base,
+    marginBottom: 14,
   },
   progressTitle: {
-    color: TextColors.primary,
-    fontSize: Typography.fontSize.base,
+    color: '#FFFFFF',
+    fontSize: 15,
     fontWeight: '600',
   },
   progressPoints: {
-    color: TextColors.secondary,
-    fontSize: Typography.fontSize.sm,
+    color: 'rgba(255,255,255,0.5)',
+    fontSize: 13,
   },
   progressBarContainer: {
-    height: 8,
-    backgroundColor: BackgroundColors.secondary,
-    borderRadius: BorderRadius.sm,
+    height: 6,
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    borderRadius: 3,
     overflow: 'hidden',
-    marginBottom: Spacing.sm,
+    marginBottom: 10,
   },
   progressBar: {
     height: '100%',
-    backgroundColor: AccentColors.primary,
-    borderRadius: BorderRadius.sm,
+    backgroundColor: '#5684C4',
+    borderRadius: 3,
   },
   progressRemaining: {
-    color: TextColors.secondary,
-    fontSize: Typography.fontSize.sm,
+    color: 'rgba(255,255,255,0.5)',
+    fontSize: 12,
     textAlign: 'center',
   },
   outlineButton: {
     borderWidth: 1,
-    borderColor: AccentColors.border,
-    borderRadius: BorderRadius.base,
-    padding: Spacing.base,
+    borderColor: 'rgba(255,255,255,0.1)',
+    borderRadius: 12,
+    padding: 16,
     alignItems: 'center',
-    minHeight: 52,
+    minHeight: 56,
     justifyContent: 'center',
-    marginBottom: Spacing.base,
+    marginBottom: 10,
+    backgroundColor: 'rgba(255,255,255,0.03)',
   },
   outlineButtonContent: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   outlineButtonText: {
-    color: TextColors.primary,
-    fontSize: Typography.fontSize.base,
+    color: '#FFFFFF',
+    fontSize: 15,
     fontWeight: '500',
   },
   pointsHistoryLink: {
     alignItems: 'center',
-    paddingVertical: Spacing.base,
-    marginBottom: Spacing.xl * 2,
+    paddingVertical: 16,
+    marginBottom: 40,
   },
   pointsHistoryLinkText: {
-    color: AccentColors.primary,
-    fontSize: Typography.fontSize.base,
+    color: '#5684C4',
+    fontSize: 14,
+    fontWeight: '500',
   },
 });
