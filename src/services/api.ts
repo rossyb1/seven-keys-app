@@ -7,9 +7,16 @@ import type { User, Venue, Booking, WaitlistEntry } from '../types/database';
 // Invite Code Functions
 // ============================================================================
 
+// Generate a unique referral code from user's name
+function generateReferralCode(fullName: string): string {
+  const firstName = fullName.split(' ')[0].toUpperCase().slice(0, 6);
+  const randomPart = Math.random().toString(36).substring(2, 5).toUpperCase();
+  return `${firstName}${randomPart}`;
+}
+
 export async function validateInviteCode(
   code: string
-): Promise<{ valid: boolean; error?: string }> {
+): Promise<{ valid: boolean; isReferral?: boolean; referrerId?: string; error?: string }> {
   const upperCode = code.toUpperCase().trim();
   
   // Test codes ONLY work in development (disabled in production)
@@ -41,6 +48,8 @@ export async function validateInviteCode(
 
     const queryPromise = (async () => {
       console.log('🔍 Validating invite code with Supabase...');
+      
+      // First check invite_codes table
       const { data, error } = await supabase
         .from('invite_codes')
         .select('id, status')
@@ -48,25 +57,31 @@ export async function validateInviteCode(
         .eq('status', 'unused')
         .single();
 
-      if (error) {
-        console.error('Supabase error:', error);
-        if (error.code === 'PGRST116') {
-          // No rows returned
-          return { valid: false, error: 'Invalid or already used invite code' };
-        }
-        // Check if it's a network/connection error
-        if (error.message?.includes('fetch') || error.message?.includes('network') || error.message?.includes('timeout')) {
-          return { valid: false, error: 'Connection error. Please check your internet and try again.' };
-        }
-        return { valid: false, error: error.message || 'Failed to validate invite code' };
+      if (data) {
+        console.log('✅ Invite code validated successfully');
+        return { valid: true };
       }
 
-      if (!data) {
-        return { valid: false, error: 'Invalid invite code' };
+      // If not found in invite_codes, check user referral codes
+      console.log('🔍 Checking referral codes...');
+      const { data: referrer, error: refError } = await supabase
+        .from('users')
+        .select('id, referral_code')
+        .eq('referral_code', upperCode)
+        .single();
+
+      if (referrer) {
+        console.log('✅ Referral code validated - referred by:', referrer.id);
+        return { valid: true, isReferral: true, referrerId: referrer.id };
       }
 
-      console.log('✅ Invite code validated successfully');
-      return { valid: true };
+      // Check for network errors
+      if (error?.message?.includes('fetch') || error?.message?.includes('network') || error?.message?.includes('timeout') ||
+          refError?.message?.includes('fetch') || refError?.message?.includes('network') || refError?.message?.includes('timeout')) {
+        return { valid: false, error: 'Connection error. Please check your internet and try again.' };
+      }
+
+      return { valid: false, error: 'Invalid or already used invite code' };
     })();
 
     return await Promise.race([queryPromise, timeoutPromise]);
@@ -325,15 +340,17 @@ export async function createUser(userData: {
           console.log('  Full name:', userData.full_name);
           console.log('  Phone:', userData.phone);
           
+          const referralCode = generateReferralCode(userData.full_name);
           const insertPayload = {
             id: authData.user.id,
             email: userData.email,
             full_name: userData.full_name,
             phone: userData.phone,
             tier: 'blue',
-            points_balance: 0,
+            points_balance: 100,
             preferred_cities: JSON.stringify([]),
             invite_code_used: userData.invite_code.toUpperCase(),
+            referral_code: referralCode,
           };
           
           console.log('  Insert payload:', JSON.stringify(insertPayload, null, 2));
@@ -425,6 +442,22 @@ export async function createUser(userData: {
             }
           } catch (markError) {
             console.warn('⚠️ Error marking invite code as used:', markError);
+          }
+
+          // Process referral if invite code was a referral code
+          try {
+            const { data: referrer } = await supabase
+              .from('users')
+              .select('id')
+              .eq('referral_code', userData.invite_code.toUpperCase())
+              .single();
+
+            if (referrer) {
+              console.log('🎉 Processing referral - referrer:', referrer.id);
+              await processReferral(referrer.id, authData.user.id);
+            }
+          } catch (refError) {
+            console.warn('⚠️ Error processing referral:', refError);
           }
 
           // Ensure session is refreshed so auth context picks up the new user
@@ -1020,5 +1053,111 @@ export async function joinWaitlist(data: {
     return { success: true };
   } catch (error: any) {
     return { success: false, error: error.message || 'Failed to join waitlist' };
+  }
+}
+
+// ============================================================================
+// Referral Functions
+// ============================================================================
+
+const REFERRAL_POINTS = 250;
+
+export async function processReferral(
+  referrerId: string,
+  referredId: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    // Create referral record
+    const { error: refError } = await supabase.from('referrals').insert({
+      referrer_id: referrerId,
+      referred_id: referredId,
+      points_awarded: REFERRAL_POINTS,
+    });
+
+    if (refError) {
+      console.error('Error creating referral:', refError);
+      return { success: false, error: refError.message };
+    }
+
+    // Award points to referrer
+    const { error: referrerError } = await supabase.rpc('increment_points', {
+      user_id: referrerId,
+      amount: REFERRAL_POINTS,
+    }).single();
+
+    // If RPC doesn't exist, fallback to manual update
+    if (referrerError) {
+      console.log('RPC not available, using manual update');
+      const { data: referrerUser } = await supabase
+        .from('users')
+        .select('points_balance')
+        .eq('id', referrerId)
+        .single();
+
+      if (referrerUser) {
+        await supabase
+          .from('users')
+          .update({ points_balance: (referrerUser.points_balance || 0) + REFERRAL_POINTS })
+          .eq('id', referrerId);
+      }
+    }
+
+    // Award bonus points to referred user (on top of the 100 signup bonus)
+    const { data: referredUser } = await supabase
+      .from('users')
+      .select('points_balance')
+      .eq('id', referredId)
+      .single();
+
+    if (referredUser) {
+      await supabase
+        .from('users')
+        .update({ points_balance: (referredUser.points_balance || 0) + REFERRAL_POINTS })
+        .eq('id', referredId);
+    }
+
+    console.log(`✅ Referral processed: ${REFERRAL_POINTS} pts to both users`);
+    return { success: true };
+  } catch (error: any) {
+    console.error('processReferral error:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+export async function getUserReferralInfo(): Promise<{
+  referralCode: string | null;
+  referralCount: number;
+  totalPointsEarned: number;
+  error?: string;
+}> {
+  try {
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+    if (!authUser) {
+      return { referralCode: null, referralCount: 0, totalPointsEarned: 0, error: 'Not authenticated' };
+    }
+
+    // Get user's referral code
+    const { data: userData } = await supabase
+      .from('users')
+      .select('referral_code')
+      .eq('id', authUser.id)
+      .single();
+
+    // Get referral count
+    const { data: referrals, count } = await supabase
+      .from('referrals')
+      .select('*', { count: 'exact' })
+      .eq('referrer_id', authUser.id);
+
+    const referralCount = count || 0;
+    const totalPointsEarned = referralCount * REFERRAL_POINTS;
+
+    return {
+      referralCode: userData?.referral_code || null,
+      referralCount,
+      totalPointsEarned,
+    };
+  } catch (error: any) {
+    return { referralCode: null, referralCount: 0, totalPointsEarned: 0, error: error.message };
   }
 }

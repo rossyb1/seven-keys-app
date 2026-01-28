@@ -1,13 +1,14 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, StatusBar, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, StatusBar, ActivityIndicator, Alert, Share } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
-import { User, CreditCard, MapPin, Bell, BarChart3, MessageCircle, HelpCircle, LogOut, Trash2, ChevronRight } from 'lucide-react-native';
+import { User, CreditCard, MapPin, Bell, BarChart3, MessageCircle, HelpCircle, LogOut, Trash2, ChevronRight, Gift, Copy, Users } from 'lucide-react-native';
 import { BrandColors, BackgroundColors, TextColors, AccentColors, Spacing, Typography, BorderRadius, Shadows } from '../../constants/brand';
-import { getUserProfile, signOut } from '../../src/services/api';
+import { getUserProfile, getUserReferralInfo, signOut } from '../../src/services/api';
 import { useAuth } from '../../src/contexts/AuthContext';
 import type { User as UserType } from '../../src/types/database';
 import { BlueCard, SilverCard, GoldCard, BlackCard } from '../../src/components/cards/membership';
+import * as Clipboard from 'expo-clipboard';
 
 interface ProfileScreenProps {
   navigation: any;
@@ -33,6 +34,8 @@ export default function ProfileScreen({ navigation }: ProfileScreenProps) {
   const insets = useSafeAreaInsets();
   const [user, setUser] = useState<UserType | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [referralCode, setReferralCode] = useState<string | null>(null);
+  const [referralCount, setReferralCount] = useState(0);
 
   // Fetch user profile when screen comes into focus
   useFocusEffect(
@@ -46,6 +49,11 @@ export default function ProfileScreen({ navigation }: ProfileScreenProps) {
           } else {
             setUser(result.user);
           }
+
+          // Fetch referral info
+          const refInfo = await getUserReferralInfo();
+          setReferralCode(refInfo.referralCode);
+          setReferralCount(refInfo.referralCount);
         } catch (err: any) {
           console.error('Error fetching profile:', err);
         } finally {
@@ -56,6 +64,23 @@ export default function ProfileScreen({ navigation }: ProfileScreenProps) {
       fetchProfile();
     }, [])
   );
+
+  const handleShareReferral = async () => {
+    if (!referralCode) return;
+    try {
+      await Share.share({
+        message: `Join me on Seven Keys — the exclusive concierge app for Dubai's best venues. Use my invite code: ${referralCode}\n\nWe both get 250 bonus points! 🎉`,
+      });
+    } catch (error) {
+      console.error('Share error:', error);
+    }
+  };
+
+  const handleCopyCode = async () => {
+    if (!referralCode) return;
+    await Clipboard.setStringAsync(referralCode);
+    Alert.alert('Copied!', 'Your invite code has been copied to clipboard.');
+  };
 
   // Render member card based on tier
   const renderMemberCard = () => {
@@ -249,6 +274,43 @@ export default function ProfileScreen({ navigation }: ProfileScreenProps) {
 
         <View style={styles.divider} />
 
+        {/* Invite Friends Section */}
+        {referralCode && (
+          <>
+            <Text style={styles.sectionHeader}>INVITE FRIENDS</Text>
+            <View style={styles.inviteCard}>
+              <View style={styles.inviteHeader}>
+                <View style={styles.inviteIconContainer}>
+                  <Gift size={20} color="#5684C4" strokeWidth={1.5} />
+                </View>
+                <View style={styles.inviteInfo}>
+                  <Text style={styles.inviteTitle}>Earn 250 points each</Text>
+                  <Text style={styles.inviteSubtitle}>Share your code with friends</Text>
+                </View>
+              </View>
+              <View style={styles.inviteCodeRow}>
+                <Text style={styles.inviteCodeLabel}>Your code</Text>
+                <TouchableOpacity style={styles.inviteCodeBadge} onPress={handleCopyCode}>
+                  <Text style={styles.inviteCodeText}>{referralCode}</Text>
+                  <Copy size={14} color="#5684C4" strokeWidth={2} />
+                </TouchableOpacity>
+              </View>
+              {referralCount > 0 && (
+                <View style={styles.inviteStatsRow}>
+                  <Users size={14} color="rgba(255,255,255,0.5)" strokeWidth={1.5} />
+                  <Text style={styles.inviteStatsText}>
+                    {referralCount} friend{referralCount !== 1 ? 's' : ''} invited • {(referralCount * 250).toLocaleString()} pts earned
+                  </Text>
+                </View>
+              )}
+              <TouchableOpacity style={styles.shareButton} onPress={handleShareReferral}>
+                <Text style={styles.shareButtonText}>SHARE INVITE</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.divider} />
+          </>
+        )}
+
         {/* Support Section */}
         <Text style={styles.sectionHeader}>SUPPORT</Text>
         <View style={styles.menuList}>
@@ -397,6 +459,93 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '500',
     marginLeft: 14,
+  },
+  inviteCard: {
+    backgroundColor: 'rgba(255,255,255,0.03)',
+    borderWidth: 1,
+    borderColor: 'rgba(86,132,196,0.15)',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 8,
+  },
+  inviteHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 14,
+  },
+  inviteIconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: 'rgba(86,132,196,0.12)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  inviteInfo: {
+    marginLeft: 12,
+    flex: 1,
+  },
+  inviteTitle: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 2,
+  },
+  inviteSubtitle: {
+    color: 'rgba(255,255,255,0.5)',
+    fontSize: 13,
+  },
+  inviteCodeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  inviteCodeLabel: {
+    color: 'rgba(255,255,255,0.4)',
+    fontSize: 12,
+    fontWeight: '600',
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+  },
+  inviteCodeBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(86,132,196,0.12)',
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 8,
+    gap: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(86,132,196,0.25)',
+  },
+  inviteCodeText: {
+    color: '#5684C4',
+    fontSize: 16,
+    fontWeight: '700',
+    letterSpacing: 2,
+  },
+  inviteStatsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 14,
+  },
+  inviteStatsText: {
+    color: 'rgba(255,255,255,0.5)',
+    fontSize: 13,
+  },
+  shareButton: {
+    backgroundColor: '#5684C4',
+    borderRadius: 10,
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+  shareButtonText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '700',
+    letterSpacing: 1,
   },
   logOutButton: {
     flexDirection: 'row',

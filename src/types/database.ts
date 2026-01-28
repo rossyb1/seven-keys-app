@@ -10,6 +10,8 @@ export type User = {
   points_balance: number;
   preferred_cities: string[];
   invite_code_used: string | null;
+  referral_code: string | null;
+  referred_by: string | null;
   created_at: string;
 };
 
