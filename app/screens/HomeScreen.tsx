@@ -87,15 +87,16 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
 
           const bookingsResult = await getUserBookings();
           if (bookingsResult.bookings && bookingsResult.bookings.length > 0) {
-            // Find the next upcoming confirmed booking
+            // Find the next upcoming booking (confirmed or pending)
             const now = new Date();
+            const activeStatuses = ['confirmed', 'pending', 'deposit_pending', 'deposit_confirmed', 'counter_offer', 'awaiting_info'];
             const upcoming = bookingsResult.bookings
-              .filter((b: Booking) => 
-                b.status === 'confirmed' && 
-                new Date(`${b.date}T${b.time}`) > now
+              .filter((b: any) => 
+                activeStatuses.includes(b.status) && 
+                new Date(`${b.booking_date}T${b.booking_time || '00:00'}`) > now
               )
-              .sort((a: Booking, b: Booking) => 
-                new Date(`${a.date}T${a.time}`).getTime() - new Date(`${b.date}T${b.time}`).getTime()
+              .sort((a: any, b: any) => 
+                new Date(`${a.booking_date}T${a.booking_time || '00:00'}`).getTime() - new Date(`${b.booking_date}T${b.booking_time || '00:00'}`).getTime()
               )[0];
             setUpcomingBooking(upcoming || null);
           }
@@ -297,25 +298,27 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
             >
               <View style={styles.bookingInfo}>
                 <Text style={styles.bookingVenue}>
-                  {(upcomingBooking as any).venues?.name || 'Venue'}
+                  {(upcomingBooking as any).venues?.name || (upcomingBooking as any).venue?.name || 'Venue'}
                 </Text>
                 <View style={styles.bookingDetails}>
                   <View style={styles.bookingDetailItem}>
                     <Calendar size={12} color="rgba(255,255,255,0.5)" strokeWidth={1.5} />
                     <Text style={styles.bookingDetailText}>
-                      {formatBookingDate(upcomingBooking.date)}
+                      {formatBookingDate((upcomingBooking as any).booking_date)}
                     </Text>
                   </View>
-                  <View style={styles.bookingDetailItem}>
-                    <Clock size={12} color="rgba(255,255,255,0.5)" strokeWidth={1.5} />
-                    <Text style={styles.bookingDetailText}>
-                      {formatTime(upcomingBooking.time)}
-                    </Text>
-                  </View>
+                  {(upcomingBooking as any).booking_time && (
+                    <View style={styles.bookingDetailItem}>
+                      <Clock size={12} color="rgba(255,255,255,0.5)" strokeWidth={1.5} />
+                      <Text style={styles.bookingDetailText}>
+                        {formatTime((upcomingBooking as any).booking_time)}
+                      </Text>
+                    </View>
+                  )}
                   <View style={styles.bookingDetailItem}>
                     <Users size={12} color="rgba(255,255,255,0.5)" strokeWidth={1.5} />
                     <Text style={styles.bookingDetailText}>
-                      {upcomingBooking.party_size} guests
+                      {(upcomingBooking as any).party_size} guests
                     </Text>
                   </View>
                 </View>
