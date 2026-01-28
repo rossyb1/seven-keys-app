@@ -1,9 +1,9 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ImageBackground, TextInput, Alert, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Search, ChevronRight, Calendar, Users, Clock, Sparkles } from 'lucide-react-native';
+import { Search, ChevronRight, Calendar, Users, Clock, Sparkles, ArrowRight } from 'lucide-react-native';
 import { useAuth } from '../../src/contexts/AuthContext';
 import { getUserProfile, getUserBookings } from '../../src/services/api';
 import type { User, Booking } from '../../src/types/database';
@@ -19,6 +19,14 @@ interface Category {
   subtitle: string;
   enabled: boolean;
 }
+
+// Tier thresholds for progress calculation
+const TIER_THRESHOLDS = {
+  blue: 0,
+  silver: 5000,
+  gold: 25000,
+  black: 100000,
+};
 
 const categories: Category[] = [
   { 
@@ -60,6 +68,7 @@ const categories: Category[] = [
 
 export default function HomeScreen({ navigation }: HomeScreenProps) {
   const { user: authUser } = useAuth();
+  const scrollViewRef = useRef<ScrollView>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [user, setUser] = useState<User | null>(null);
   const [upcomingBooking, setUpcomingBooking] = useState<Booking | null>(null);
@@ -153,18 +162,58 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
     return `${displayHour}:${minutes} ${ampm}`;
   };
 
-  const getTierColor = (tier: string) => {
+  const getTierColors = (tier: string): [string, string] => {
     switch (tier?.toLowerCase()) {
-      case 'black': return '#1a1a1a';
-      case 'gold': return '#B8860B';
-      case 'silver': return '#71717a';
-      default: return '#1e3a5f';
+      case 'black': return ['#2a2a2a', '#1a1a1a'];
+      case 'gold': return ['#D4AF37', '#B8860B'];
+      case 'silver': return ['#A8A8A8', '#71717a'];
+      default: return ['#4A7DB8', '#1e3a5f']; // Blue
     }
   };
+
+  const getTierProgress = () => {
+    if (!user) return { progress: 0, nextTier: 'Silver', pointsNeeded: 5000 };
+    
+    const points = user.points_balance || 0;
+    const tier = user.tier?.toLowerCase() || 'blue';
+    
+    if (tier === 'black') return { progress: 100, nextTier: 'Black', pointsNeeded: 0 };
+    
+    let currentThreshold = 0;
+    let nextThreshold = 5000;
+    let nextTier = 'Silver';
+    
+    if (tier === 'blue') {
+      currentThreshold = 0;
+      nextThreshold = TIER_THRESHOLDS.silver;
+      nextTier = 'Silver';
+    } else if (tier === 'silver') {
+      currentThreshold = TIER_THRESHOLDS.silver;
+      nextThreshold = TIER_THRESHOLDS.gold;
+      nextTier = 'Gold';
+    } else if (tier === 'gold') {
+      currentThreshold = TIER_THRESHOLDS.gold;
+      nextThreshold = TIER_THRESHOLDS.black;
+      nextTier = 'Black';
+    }
+    
+    const pointsInTier = points - currentThreshold;
+    const pointsNeeded = nextThreshold - currentThreshold;
+    const progress = Math.min((pointsInTier / pointsNeeded) * 100, 100);
+    
+    return { progress, nextTier, pointsNeeded: nextThreshold - points };
+  };
+
+  const scrollToCategories = () => {
+    scrollViewRef.current?.scrollTo({ y: 350, animated: true });
+  };
+
+  const tierProgress = getTierProgress();
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView
+        ref={scrollViewRef}
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
@@ -175,29 +224,61 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
             <Text style={styles.greeting}>{getGreeting()}</Text>
             {user && <Text style={styles.userName}>{getFirstName()}</Text>}
           </View>
-          {user && (
+          {user && (user.points_balance || 0) > 0 ? (
             <TouchableOpacity 
               style={styles.pointsBadge}
               onPress={() => navigation.navigate('SevenKCard')}
             >
               <Sparkles size={14} color="#5684C4" strokeWidth={2} />
-              <Text style={styles.pointsText}>{user.points_balance?.toLocaleString() || 0}</Text>
+              <Text style={styles.pointsText}>{user.points_balance?.toLocaleString()}</Text>
             </TouchableOpacity>
-          )}
+          ) : user ? (
+            <TouchableOpacity 
+              style={styles.pointsBadgeEmpty}
+              onPress={() => navigation.navigate('SevenKCard')}
+            >
+              <Text style={styles.pointsTextEmpty}>Start earning</Text>
+              <ArrowRight size={12} color="rgba(255,255,255,0.5)" strokeWidth={2} />
+            </TouchableOpacity>
+          ) : null}
         </View>
 
-        {/* Compact Membership Card */}
+        {/* Compact Membership Card with tier accent */}
         {user && (
           <TouchableOpacity 
-            style={[styles.membershipCard, { borderColor: getTierColor(user.tier) + '40' }]}
+            style={styles.membershipCard}
             onPress={() => navigation.navigate('SevenKCard')}
             activeOpacity={0.8}
           >
-            <View style={styles.membershipLeft}>
-              <Text style={styles.membershipLabel}>7K MEMBER</Text>
-              <Text style={styles.membershipTier}>{user.tier?.toUpperCase() || 'BLUE'} TIER</Text>
+            <LinearGradient
+              colors={getTierColors(user.tier || 'blue')}
+              style={styles.tierAccent}
+            />
+            <View style={styles.membershipContent}>
+              <View style={styles.membershipTop}>
+                <View style={styles.membershipLeft}>
+                  <Text style={styles.membershipLabel}>7K MEMBER</Text>
+                  <Text style={styles.membershipTier}>{user.tier?.toUpperCase() || 'BLUE'}</Text>
+                </View>
+                <ChevronRight size={20} color="rgba(255,255,255,0.4)" strokeWidth={1.5} />
+              </View>
+              {/* Mini progress bar */}
+              <View style={styles.progressContainer}>
+                <View style={styles.progressBar}>
+                  <LinearGradient
+                    colors={getTierColors(user.tier || 'blue')}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    style={[styles.progressFill, { width: `${tierProgress.progress}%` }]}
+                  />
+                </View>
+                <Text style={styles.progressText}>
+                  {tierProgress.pointsNeeded > 0 
+                    ? `${tierProgress.pointsNeeded.toLocaleString()} pts to ${tierProgress.nextTier}`
+                    : 'Max tier reached'}
+                </Text>
+              </View>
             </View>
-            <ChevronRight size={20} color="rgba(255,255,255,0.4)" strokeWidth={1.5} />
           </TouchableOpacity>
         )}
 
@@ -244,11 +325,11 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
           ) : (
             <TouchableOpacity 
               style={styles.emptyBookingCard}
-              onPress={() => navigation.navigate('Home')}
+              onPress={scrollToCategories}
               activeOpacity={0.8}
             >
               <Text style={styles.emptyBookingText}>No upcoming bookings</Text>
-              <Text style={styles.emptyBookingCta}>Browse venues →</Text>
+              <Text style={styles.emptyBookingCta}>Explore below ↓</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -354,16 +435,40 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '700',
   },
+  pointsBadgeEmpty: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 20,
+    gap: 4,
+  },
+  pointsTextEmpty: {
+    color: 'rgba(255,255,255,0.5)',
+    fontSize: 13,
+    fontWeight: '500',
+  },
   membershipCard: {
+    flexDirection: 'row',
+    backgroundColor: 'rgba(255,255,255,0.03)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.08)',
+    borderRadius: 12,
+    marginBottom: 20,
+    overflow: 'hidden',
+  },
+  tierAccent: {
+    width: 4,
+  },
+  membershipContent: {
+    flex: 1,
+    padding: 14,
+  },
+  membershipTop: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: 'rgba(255,255,255,0.03)',
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    marginBottom: 20,
+    marginBottom: 10,
   },
   membershipLeft: {
     flex: 1,
@@ -376,10 +481,27 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   membershipTier: {
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: 18,
+    fontWeight: '700',
     color: '#FFFFFF',
     letterSpacing: 0.5,
+  },
+  progressContainer: {
+    gap: 6,
+  },
+  progressBar: {
+    height: 4,
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    borderRadius: 2,
+    overflow: 'hidden',
+  },
+  progressFill: {
+    height: '100%',
+    borderRadius: 2,
+  },
+  progressText: {
+    fontSize: 11,
+    color: 'rgba(255,255,255,0.4)',
   },
   bookingSection: {
     marginBottom: 24,
@@ -426,13 +548,12 @@ const styles = StyleSheet.create({
     color: 'rgba(255,255,255,0.6)',
   },
   emptyBookingCard: {
-    backgroundColor: 'rgba(255,255,255,0.03)',
+    backgroundColor: 'rgba(255,255,255,0.02)',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.06)',
+    borderColor: 'rgba(255,255,255,0.08)',
     borderRadius: 12,
     padding: 20,
     alignItems: 'center',
-    borderStyle: 'dashed',
   },
   emptyBookingText: {
     fontSize: 14,
