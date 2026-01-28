@@ -193,9 +193,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255,255,255,0.08)',
+    paddingVertical: 14,
   },
   backButton: {
     width: 40,
@@ -206,8 +204,8 @@ const styles = StyleSheet.create({
   headerTitle: {
     flex: 1,
     fontSize: 18,
-    fontWeight: '500',
-    letterSpacing: 1,
+    fontWeight: '600',
+    letterSpacing: 0.3,
     color: '#FFFFFF',
     textAlign: 'center',
   },
@@ -216,27 +214,31 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     marginHorizontal: 20,
+    marginTop: 4,
     marginBottom: 16,
   },
   cityFilterContainer: {
-    marginHorizontal: 20,
     marginBottom: 16,
+    paddingLeft: 20,
   },
   cityFilterContent: {
-    gap: 10,
+    gap: 8,
     alignItems: 'center',
+    paddingRight: 20,
   },
   cityPill: {
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 20,
-    alignSelf: 'center',
+    borderWidth: 1,
+    borderColor: 'transparent',
   },
   cityPillSelected: {
     backgroundColor: '#5684C4',
   },
   cityPillUnselected: {
-    backgroundColor: 'rgba(255,255,255,0.08)',
+    backgroundColor: 'transparent',
+    borderColor: 'rgba(255,255,255,0.15)',
   },
   cityPillText: {
     fontSize: 13,
@@ -252,7 +254,9 @@ const styles = StyleSheet.create({
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.06)',
+    backgroundColor: 'rgba(255,255,255,0.04)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.08)',
     borderRadius: 12,
     paddingHorizontal: 14,
     paddingVertical: 12,
@@ -272,17 +276,19 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: 40,
   },
   emptyText: {
     color: 'rgba(255,255,255,0.5)',
-    fontSize: 16,
+    fontSize: 14,
+    textAlign: 'center',
   },
   venuesScrollView: {
     flex: 1,
   },
   venuesScrollContent: {
     paddingHorizontal: 20,
-    paddingTop: 8,
+    paddingTop: 4,
     paddingBottom: 100,
     gap: 12,
   },
