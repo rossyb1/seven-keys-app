@@ -25,15 +25,15 @@ export const venueGallery: Record<string, any[]> = {
     require('../../Images/nobubeach-5.jpg'),
   ],
   'Surf Club': [
+    require('../../Images/surfclub-4.jpg'),
     require('../../Images/surfclub-1.jpg'),
     require('../../Images/surfclub-2.jpg'),
     require('../../Images/surfclub-3.jpg'),
-    require('../../Images/surfclub-4.jpg'),
   ],
   'Tattu Skypool': [
+    require('../../Images/tattu-3.jpg'),
     require('../../Images/tattu-1.webp'),
     require('../../Images/tattu-2.webp'),
-    require('../../Images/tattu-3.jpg'),
     require('../../Images/tattu-4.jpg'),
   ],
   'Verde Beach': [

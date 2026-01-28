@@ -17,9 +17,9 @@ export const BackgroundColors = {
 } as const;
 
 export const TextColors = {
-  primary: '#E6E8EA',      // Platinum - main text
-  secondary: '#A0A8B3',    // Muted - supporting text
-  tertiary: '#5A6478',     // Dimmed - hints, disabled
+  primary: '#FFFFFF',      // Pure white - headlines, important
+  secondary: 'rgba(255,255,255,0.6)',  // Muted - supporting text (ONE value)
+  tertiary: 'rgba(255,255,255,0.35)',  // Dimmed - hints, disabled (ONE value)
   inverse: '#09162E',      // For light backgrounds
 } as const;
 
@@ -86,12 +86,12 @@ export const Spacing = {
 } as const;
 
 export const BorderRadius = {
-  sm: 4,
-  md: 8,
-  base: 12,
-  lg: 16,
-  xl: 20,
-  full: 9999,
+  xs: 4,      // Pills, tiny badges
+  sm: 8,      // Small buttons, tags
+  md: 12,     // Cards, inputs, standard
+  lg: 16,     // Large cards, modals
+  xl: 24,     // Floating elements
+  full: 9999, // Circles
 } as const;
 
 export const Shadows = {

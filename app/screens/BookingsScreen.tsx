@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, StatusBar, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
+import { Calendar } from 'lucide-react-native';
 import { BrandColors, BackgroundColors, TextColors, AccentColors, Spacing, Typography, BorderRadius } from '../../constants/brand';
 import BookingCard from '../../components/cards/BookingCard';
 import { getUserBookings } from '../../src/services/api';
@@ -121,7 +122,7 @@ export default function BookingsScreen({ navigation }: BookingsScreenProps) {
       {/* Tab Switcher */}
       <View style={styles.tabSwitcher}>
         <TouchableOpacity
-          style={styles.tab}
+          style={[styles.tab, activeTab === 'upcoming' && styles.tabActive]}
           onPress={() => setActiveTab('upcoming')}
         >
           <Text
@@ -132,10 +133,9 @@ export default function BookingsScreen({ navigation }: BookingsScreenProps) {
           >
             Upcoming
           </Text>
-          {activeTab === 'upcoming' && <View style={styles.tabUnderline} />}
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.tab}
+          style={[styles.tab, activeTab === 'past' && styles.tabActive]}
           onPress={() => setActiveTab('past')}
         >
           <Text
@@ -146,7 +146,6 @@ export default function BookingsScreen({ navigation }: BookingsScreenProps) {
           >
             Past
           </Text>
-          {activeTab === 'past' && <View style={styles.tabUnderline} />}
         </TouchableOpacity>
       </View>
 
@@ -219,17 +218,27 @@ export default function BookingsScreen({ navigation }: BookingsScreenProps) {
           })
         ) : (
           <View style={styles.emptyState}>
-            <Text style={styles.emptyStateText}>
-              No bookings yet. Discover venues to make your first booking.
+            <View style={styles.emptyStateIcon}>
+              <Calendar size={32} color="#5684C4" strokeWidth={1.5} />
+            </View>
+            <Text style={styles.emptyStateTitle}>
+              {activeTab === 'upcoming' ? 'No upcoming bookings' : 'No past bookings'}
             </Text>
-            <TouchableOpacity
-              style={styles.discoverButton}
-              onPress={() => {
-                navigation.navigate('MainTabs', { screen: 'Discover' });
-              }}
-            >
-              <Text style={styles.discoverButtonText}>Discover venues</Text>
-            </TouchableOpacity>
+            <Text style={styles.emptyStateText}>
+              {activeTab === 'upcoming' 
+                ? 'Your next adventure awaits. Browse our curated venues and experiences.'
+                : 'Your booking history will appear here.'}
+            </Text>
+            {activeTab === 'upcoming' && (
+              <TouchableOpacity
+                style={styles.discoverButton}
+                onPress={() => {
+                  navigation.navigate('MainTabs', { screen: 'Home' });
+                }}
+              >
+                <Text style={styles.discoverButtonText}>Explore venues</Text>
+              </TouchableOpacity>
+            )}
           </View>
         )}
       </ScrollView>
@@ -254,30 +263,29 @@ const styles = StyleSheet.create({
   tabSwitcher: {
     flexDirection: 'row',
     paddingHorizontal: Spacing.xl,
-    marginBottom: Spacing.base,
-    borderBottomWidth: 1,
-    borderBottomColor: AccentColors.border,
+    marginBottom: Spacing.lg,
+    gap: 8,
   },
   tab: {
     flex: 1,
-    paddingBottom: Spacing.base,
+    paddingVertical: 12,
     alignItems: 'center',
+    borderRadius: 10,
+    backgroundColor: 'transparent',
+  },
+  tabActive: {
+    backgroundColor: 'rgba(86,132,196,0.15)',
   },
   tabText: {
-    color: TextColors.secondary,
-    fontSize: Typography.fontSize.base,
-    fontWeight: '500',
+    color: 'rgba(255,255,255,0.5)',
+    fontSize: 14,
+    fontWeight: '600',
   },
   tabTextActive: {
-    color: AccentColors.primary,
+    color: '#5684C4',
   },
   tabUnderline: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 2,
-    backgroundColor: AccentColors.primary,
+    display: 'none',
   },
   content: {
     flex: 1,
@@ -297,55 +305,73 @@ const styles = StyleSheet.create({
   },
   emptyState: {
     alignItems: 'center',
-    paddingVertical: Spacing.xl * 3,
+    paddingVertical: 60,
+    paddingHorizontal: 40,
+  },
+  emptyStateIcon: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: 'rgba(86,132,196,0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  emptyStateTitle: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 8,
+    textAlign: 'center',
   },
   emptyStateText: {
-    color: TextColors.secondary,
-    fontSize: Typography.fontSize.base,
-    marginBottom: Spacing.xl,
+    color: 'rgba(255,255,255,0.5)',
+    fontSize: 14,
+    marginBottom: 28,
     textAlign: 'center',
-    paddingHorizontal: Spacing.xl,
+    lineHeight: 20,
   },
   discoverButton: {
-    backgroundColor: AccentColors.primary,
-    borderRadius: BorderRadius.base,
-    paddingHorizontal: Spacing.xl,
-    paddingVertical: Spacing.base,
+    backgroundColor: '#5684C4',
+    borderRadius: 12,
+    paddingHorizontal: 28,
+    paddingVertical: 14,
   },
   discoverButtonText: {
-    color: BrandColors.black,
-    fontSize: Typography.fontSize.base,
+    color: '#FFFFFF',
+    fontSize: 14,
     fontWeight: '600',
+    letterSpacing: 0.5,
   },
   bookingCardWrapper: {
     marginBottom: Spacing.base,
   },
   actionButtons: {
     flexDirection: 'row',
-    gap: 8,
-    marginTop: 8,
-    paddingHorizontal: 4,
+    gap: 10,
+    marginTop: 10,
   },
   actionButton: {
     flex: 1,
-    backgroundColor: 'rgba(86, 132, 196, 0.1)',
-    borderRadius: BorderRadius.base,
-    paddingVertical: 10,
+    backgroundColor: 'transparent',
+    borderRadius: 10,
+    paddingVertical: 12,
     paddingHorizontal: 12,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(86, 132, 196, 0.2)',
+    borderColor: 'rgba(255,255,255,0.1)',
   },
   cancelButton: {
-    backgroundColor: 'rgba(239, 68, 68, 0.1)',
-    borderColor: 'rgba(239, 68, 68, 0.2)',
+    flex: 0,
+    paddingHorizontal: 20,
+    borderColor: 'rgba(239, 68, 68, 0.3)',
   },
   actionButtonText: {
-    fontSize: Typography.fontSize.sm,
+    fontSize: 13,
     fontWeight: '500',
-    color: AccentColors.primary,
+    color: 'rgba(255,255,255,0.7)',
   },
   cancelButtonText: {
-    color: '#EF4444',
+    color: 'rgba(239, 68, 68, 0.8)',
   },
 });

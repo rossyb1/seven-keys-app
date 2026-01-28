@@ -448,7 +448,7 @@ export default function ConciergeScreen({ navigation, route }: ConciergeScreenPr
           )}
         </ScrollView>
 
-        {/* Quick Actions Grid */}
+        {/* Quick Actions */}
         {messages.length <= 1 && (
           <View style={styles.quickActionsContainer}>
             <View style={styles.quickActionsGrid}>
@@ -457,35 +457,35 @@ export default function ConciergeScreen({ navigation, route }: ConciergeScreenPr
                 onPress={() => handleQuickAction("I'd like to make a reservation")}
                 activeOpacity={0.7}
               >
-                <Text style={styles.quickActionText}>Make a Reservation</Text>
+                <Text style={styles.quickActionText}>Book a table</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.quickActionButton}
                 onPress={() => handleQuickAction("I'd like to book an experience")}
                 activeOpacity={0.7}
               >
-                <Text style={styles.quickActionText}>Book an Experience</Text>
+                <Text style={styles.quickActionText}>Plan an experience</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.quickActionButton}
                 onPress={() => handleQuickAction("I'd like to book for a large group")}
                 activeOpacity={0.7}
               >
-                <Text style={styles.quickActionText}>Group Booking</Text>
+                <Text style={styles.quickActionText}>Group booking</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.quickActionButton}
                 onPress={() => handleQuickAction("Can you recommend something for me?")}
                 activeOpacity={0.7}
               >
-                <Text style={styles.quickActionText}>Get Recommendations</Text>
+                <Text style={styles.quickActionText}>Surprise me</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.quickActionButton}
                 onPress={() => handleQuickAction("I'd like to arrange a corporate booking")}
                 activeOpacity={0.7}
               >
-                <Text style={styles.quickActionText}>Corporate Booking</Text>
+                <Text style={styles.quickActionText}>Corporate event</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -550,7 +550,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 12,
+    paddingVertical: 14,
     paddingHorizontal: 16,
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(255,255,255,0.08)',
@@ -563,15 +563,17 @@ const styles = StyleSheet.create({
   },
   titleSection: {
     flex: 1,
-    marginLeft: 12,
+    marginLeft: 8,
   },
   title: {
-    fontSize: 17,
+    fontSize: 18,
     fontWeight: '600',
     color: '#FFFFFF',
+    letterSpacing: 0.3,
   },
   status: {
-    fontSize: 12,
+    fontSize: 11,
+    fontWeight: '500',
     color: '#4CAF50',
     marginTop: 2,
   },
@@ -595,21 +597,22 @@ const styles = StyleSheet.create({
     maxWidth: '80%',
     paddingVertical: 12,
     paddingHorizontal: 16,
-    marginBottom: 0,
   },
   messageBubbleMember: {
     backgroundColor: '#5684C4',
-    borderRadius: 18,
+    borderRadius: 16,
     borderBottomRightRadius: 4,
   },
   messageBubbleConcierge: {
-    backgroundColor: '#1A2A3A',
-    borderRadius: 18,
+    backgroundColor: 'rgba(255,255,255,0.06)',
+    borderRadius: 16,
     borderBottomLeftRadius: 4,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.08)',
   },
   messageText: {
     fontSize: 15,
-    lineHeight: 21,
+    lineHeight: 22,
     color: '#FFFFFF',
   },
   messageTime: {
@@ -643,51 +646,53 @@ const styles = StyleSheet.create({
     opacity: 1,
   },
   quickActionsContainer: {
-    paddingVertical: 10,
+    paddingVertical: 12,
     paddingHorizontal: 16,
   },
   quickActionsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 12,
+    gap: 10,
   },
   quickActionButton: {
-    backgroundColor: 'transparent',
+    backgroundColor: 'rgba(86,132,196,0.08)',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.15)',
-    borderRadius: 12,
-    padding: 16,
-    width: '47%', // 2 columns with gap
-    minHeight: 60,
-    justifyContent: 'center',
-    alignItems: 'center',
+    borderColor: 'rgba(86,132,196,0.2)',
+    borderRadius: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
   },
   quickActionText: {
-    fontSize: 14,
-    color: '#FFFFFF',
-    textAlign: 'center',
+    fontSize: 13,
+    fontWeight: '500',
+    color: '#5684C4',
   },
   inputContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-end',
     paddingTop: 12,
     paddingBottom: 12,
     paddingHorizontal: 16,
     borderTopWidth: 1,
     borderTopColor: 'rgba(255,255,255,0.08)',
-    gap: 12,
+    gap: 10,
   },
   inputWrapper: {
     flex: 1,
-    backgroundColor: '#111D2E',
-    borderRadius: 24,
-    paddingVertical: 12,
-    paddingHorizontal: 18,
+    backgroundColor: 'rgba(255,255,255,0.04)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.08)',
+    borderRadius: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    minHeight: 44,
+    justifyContent: 'center',
   },
   input: {
     color: '#FFFFFF',
     fontSize: 15,
     maxHeight: 100,
+    lineHeight: 20,
   },
   sendButton: {
     width: 44,
@@ -700,6 +705,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#5684C4',
   },
   sendButtonInactive: {
-    backgroundColor: '#1A2A3A',
+    backgroundColor: 'rgba(255,255,255,0.06)',
   },
 });

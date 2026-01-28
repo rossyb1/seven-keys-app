@@ -18,15 +18,16 @@ export default function MainTabs() {
           borderTopColor: 'rgba(255,255,255,0.08)',
           borderTopWidth: 1,
           height: 85,
-          paddingTop: 10,
+          paddingTop: 8,
           paddingBottom: 25,
         },
         tabBarActiveTintColor: '#5684C4',
-        tabBarInactiveTintColor: 'rgba(255,255,255,0.4)',
+        tabBarInactiveTintColor: 'rgba(255,255,255,0.5)',
         tabBarLabelStyle: {
-          fontSize: 11,
-          fontWeight: '500',
+          fontSize: 10,
+          fontWeight: '600',
           marginTop: 4,
+          letterSpacing: 0.3,
         },
       }}
     >
@@ -36,9 +37,9 @@ export default function MainTabs() {
         options={{
           tabBarIcon: ({ focused, color }) => (
             <Home 
-              size={24} 
+              size={22} 
               color={color} 
-              strokeWidth={focused ? 2 : 1.5}
+              strokeWidth={focused ? 2.5 : 2}
             />
           ),
         }}
@@ -49,9 +50,9 @@ export default function MainTabs() {
         options={{
           tabBarIcon: ({ focused, color }) => (
             <Calendar 
-              size={24} 
+              size={22} 
               color={color} 
-              strokeWidth={focused ? 2 : 1.5}
+              strokeWidth={focused ? 2.5 : 2}
             />
           ),
         }}
@@ -62,9 +63,9 @@ export default function MainTabs() {
         options={{
           tabBarIcon: ({ focused, color }) => (
             <MessageCircle 
-              size={24} 
+              size={22} 
               color={color} 
-              strokeWidth={focused ? 2 : 1.5}
+              strokeWidth={focused ? 2.5 : 2}
             />
           ),
         }}
@@ -75,9 +76,9 @@ export default function MainTabs() {
         options={{
           tabBarIcon: ({ focused, color }) => (
             <User 
-              size={24} 
+              size={22} 
               color={color} 
-              strokeWidth={focused ? 2 : 1.5}
+              strokeWidth={focused ? 2.5 : 2}
             />
           ),
         }}

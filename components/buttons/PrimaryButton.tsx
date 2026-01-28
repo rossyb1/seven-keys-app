@@ -32,15 +32,14 @@ export default function PrimaryButton({ title, onPress, disabled, style }: Prima
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: BorderRadius.base,
+    borderRadius: 12,
     overflow: 'hidden',
-    ...Shadows.base,
   },
   disabled: {
-    opacity: 0.6,
+    opacity: 0.5,
   },
   gradient: {
-    paddingVertical: Spacing.base + 2,
+    paddingVertical: 18,
     paddingHorizontal: Spacing.xl,
     alignItems: 'center',
     justifyContent: 'center',
@@ -48,11 +47,11 @@ const styles = StyleSheet.create({
   },
   text: {
     color: '#FFFFFF',
-    fontSize: Typography.fontSize.base,
-    fontFamily: Typography.fontFamily.semibold,
-    letterSpacing: 1,
+    fontSize: 15,
+    fontWeight: '600',
+    letterSpacing: 1.5,
   },
   textDisabled: {
-    color: 'rgba(255,255,255,0.5)',
+    color: 'rgba(255,255,255,0.4)',
   },
 });

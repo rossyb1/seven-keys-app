@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=375, initial-scale=1.0">
+  <title>Seven Keys - VIP Home Mockup</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0A1628;
+      color: #FFFFFF;
+      min-height: 100vh;
+      max-width: 375px;
+      margin: 0 auto;
+      padding-bottom: 100px;
+    }
+    
+    .status-bar {
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    
+    /* Header with membership */
+    .header {
+      padding: 0 20px 20px;
+    }
+    
+    .greeting {
+      font-size: 14px;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 2px;
+      margin-bottom: 4px;
+    }
+    
+    .name-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .user-name {
+      font-size: 28px;
+      font-weight: 300;
+      letter-spacing: 1px;
+    }
+    
+    .member-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 6px 12px;
+      border-radius: 20px;
+    }
+    
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      background: #C9A962;
+      border-radius: 50%;
+    }
+    
+    .badge-text {
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      color: #C9A962;
+    }
+    
+    /* Points bar */
+    .points-bar {
+      margin: 0 20px 24px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .points-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .points-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #5684C4 0%, #3D6BA8 100%);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+    
+    .points-info {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .points-number {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    
+    .points-label {
+      font-size: 11px;
+      color: rgba(255,255,255,0.5);
+    }
+    
+    .points-action {
+      font-size: 12px;
+      color: #5684C4;
+    }
+    
+    /* Upcoming booking card */
+    .upcoming-section {
+      margin: 0 20px 24px;
+    }
+    
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    
+    .section-title {
+      font-size: 13px;
+      letter-spacing: 1.5px;
+      color: rgba(255,255,255,0.6);
+    }
+    
+    .see-all {
+      font-size: 12px;
+      color: #5684C4;
+    }
+    
+    .upcoming-card {
+      background: linear-gradient(135deg, rgba(86,132,196,0.15) 0%, rgba(86,132,196,0.05) 100%);
+      border: 1px solid rgba(86,132,196,0.3);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      gap: 14px;
+    }
+    
+    .upcoming-image {
+      width: 70px;
+      height: 70px;
+      background: linear-gradient(135deg, #1a2a3a 0%, #2a3a4a 100%);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+    
+    .upcoming-details {
+      flex: 1;
+    }
+    
+    .upcoming-venue {
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+    
+    .upcoming-meta {
+      font-size: 13px;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 8px;
+    }
+    
+    .upcoming-actions {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .action-btn {
+      font-size: 11px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.8);
+    }
+    
+    .action-btn.primary {
+      background: #5684C4;
+      color: #fff;
+    }
+    
+    /* Tonight section */
+    .tonight-section {
+      margin: 0 20px 24px;
+    }
+    
+    .tonight-scroll {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      margin: 0 -20px;
+      padding: 0 20px;
+    }
+    
+    .tonight-card {
+      min-width: 200px;
+      border-radius: 14px;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .tonight-image {
+      height: 120px;
+      background: linear-gradient(135deg, #1a2a3a 0%, #2a3a4a 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+    }
+    
+    .tonight-tag {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(0,0,0,0.7);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 10px;
+      letter-spacing: 1px;
+    }
+    
+    .tonight-tag.hot {
+      background: linear-gradient(135deg, #C9A962 0%, #9A7B3C 100%);
+      color: #000;
+    }
+    
+    .tonight-info {
+      padding: 12px;
+      background: rgba(255,255,255,0.05);
+    }
+    
+    .tonight-name {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 2px;
+    }
+    
+    .tonight-avail {
+      font-size: 11px;
+      color: #4CAF50;
+    }
+    
+    /* For You section */
+    .foryou-section {
+      margin: 0 20px 24px;
+    }
+    
+    .foryou-card {
+      background: rgba(255,255,255,0.05);
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 10px;
+    }
+    
+    .foryou-icon {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #1a2a3a 0%, #2a3a4a 100%);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+    
+    .foryou-text {
+      flex: 1;
+    }
+    
+    .foryou-title {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 2px;
+    }
+    
+    .foryou-desc {
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+    }
+    
+    .foryou-arrow {
+      color: rgba(255,255,255,0.3);
+      font-size: 18px;
+    }
+    
+    /* Categories (compressed) */
+    .categories-section {
+      margin: 0 20px 24px;
+    }
+    
+    .categories-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    
+    .category-card {
+      height: 80px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    
+    .category-icon {
+      font-size: 20px;
+    }
+    
+    .category-name {
+      font-size: 12px;
+      letter-spacing: 1px;
+      color: rgba(255,255,255,0.8);
+    }
+    
+    /* Concierge floating */
+    .concierge-float {
+      position: fixed;
+      bottom: 100px;
+      right: 20px;
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #5684C4 0%, #3D6BA8 100%);
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 4px 20px rgba(86,132,196,0.4);
+    }
+    
+    .concierge-badge {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      width: 18px;
+      height: 18px;
+      background: #4CAF50;
+      border-radius: 50%;
+      border: 2px solid #0A1628;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+    }
+    
+    /* Bottom nav */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 375px;
+      height: 85px;
+      background: #0A1628;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-around;
+      padding-top: 12px;
+    }
+    
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .nav-icon {
+      font-size: 22px;
+      opacity: 0.4;
+    }
+    
+    .nav-icon.active {
+      opacity: 1;
+    }
+    
+    .nav-label {
+      font-size: 10px;
+      color: rgba(255,255,255,0.4);
+    }
+    
+    .nav-label.active {
+      color: #5684C4;
+    }
+
+    /* Annotation */
+    .annotation {
+      position: absolute;
+      background: #C9A962;
+      color: #000;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="status-bar">9:41</div>
+  
+  <!-- Header with status -->
+  <div class="header">
+    <div class="greeting">GOOD EVENING</div>
+    <div class="name-row">
+      <div class="user-name">Ross</div>
+      <div class="member-badge">
+        <div class="badge-dot"></div>
+        <div class="badge-text">BLACK</div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Points bar -->
+  <div class="points-bar">
+    <div class="points-left">
+      <div class="points-icon">✦</div>
+      <div class="points-info">
+        <div class="points-number">2,450</div>
+        <div class="points-label">Keys Points</div>
+      </div>
+    </div>
+    <div class="points-action">View rewards →</div>
+  </div>
+  
+  <!-- Upcoming booking -->
+  <div class="upcoming-section">
+    <div class="section-header">
+      <div class="section-title">COMING UP</div>
+      <div class="see-all">All bookings</div>
+    </div>
+    <div class="upcoming-card">
+      <div class="upcoming-image">🍽️</div>
+      <div class="upcoming-details">
+        <div class="upcoming-venue">Nobu Dubai</div>
+        <div class="upcoming-meta">Tomorrow, 8:30 PM • 4 guests</div>
+        <div class="upcoming-actions">
+          <div class="action-btn primary">Modify</div>
+          <div class="action-btn">Running late</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Tonight / Hot right now -->
+  <div class="tonight-section">
+    <div class="section-header">
+      <div class="section-title">HOT TONIGHT</div>
+      <div class="see-all">See all</div>
+    </div>
+    <div class="tonight-scroll">
+      <div class="tonight-card">
+        <div class="tonight-image">🏖️</div>
+        <div class="tonight-tag hot">LAST TABLE</div>
+        <div class="tonight-info">
+          <div class="tonight-name">Nikki Beach</div>
+          <div class="tonight-avail">9:00 PM available</div>
+        </div>
+      </div>
+      <div class="tonight-card">
+        <div class="tonight-image">🌊</div>
+        <div class="tonight-tag">MEMBERS ONLY</div>
+        <div class="tonight-info">
+          <div class="tonight-name">Surf Club</div>
+          <div class="tonight-avail">Cabana open</div>
+        </div>
+      </div>
+      <div class="tonight-card">
+        <div class="tonight-image">🥂</div>
+        <div class="tonight-tag">NEW</div>
+        <div class="tonight-info">
+          <div class="tonight-name">Tattu Skypool</div>
+          <div class="tonight-avail">Walk-in ready</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- For You / Personalized -->
+  <div class="foryou-section">
+    <div class="section-header">
+      <div class="section-title">FOR YOU</div>
+    </div>
+    <div class="foryou-card">
+      <div class="foryou-icon">🛥️</div>
+      <div class="foryou-text">
+        <div class="foryou-title">Your usual yacht is available</div>
+        <div class="foryou-desc">Morrigan 70ft • This Saturday</div>
+      </div>
+      <div class="foryou-arrow">›</div>
+    </div>
+    <div class="foryou-card">
+      <div class="foryou-icon">⭐</div>
+      <div class="foryou-text">
+        <div class="foryou-title">You might like Verde Beach</div>
+        <div class="foryou-desc">Based on your beach club visits</div>
+      </div>
+      <div class="foryou-arrow">›</div>
+    </div>
+  </div>
+  
+  <!-- Categories (compressed) -->
+  <div class="categories-section">
+    <div class="section-header">
+      <div class="section-title">EXPLORE</div>
+    </div>
+    <div class="categories-grid">
+      <div class="category-card">
+        <div class="category-icon">🍴</div>
+        <div class="category-name">RESTAURANTS</div>
+      </div>
+      <div class="category-card">
+        <div class="category-icon">🏖️</div>
+        <div class="category-name">BEACH CLUBS</div>
+      </div>
+      <div class="category-card">
+        <div class="category-icon">🎉</div>
+        <div class="category-name">EVENTS</div>
+      </div>
+      <div class="category-card">
+        <div class="category-icon">✨</div>
+        <div class="category-name">EXPERIENCES</div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Floating concierge -->
+  <div class="concierge-float">
+    💬
+    <div class="concierge-badge">●</div>
+  </div>
+  
+  <!-- Bottom nav -->
+  <div class="bottom-nav">
+    <div class="nav-item">
+      <div class="nav-icon active">🏠</div>
+      <div class="nav-label active">Home</div>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon">📅</div>
+      <div class="nav-label">Bookings</div>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon">💳</div>
+      <div class="nav-label">Card</div>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon">👤</div>
+      <div class="nav-label">Profile</div>
+    </div>
+  </div>
+</body>
+</html>

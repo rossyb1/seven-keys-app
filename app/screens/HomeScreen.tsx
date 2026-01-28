@@ -153,28 +153,30 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 100,
+    paddingTop: 16,
+    paddingBottom: 120,
   },
   header: {
-    marginBottom: 24,
+    marginBottom: 20,
   },
   headerTitle: {
-    fontSize: 28,
-    fontWeight: '300',
-    letterSpacing: 4,
+    fontSize: 32,
+    fontWeight: '600',
+    letterSpacing: 3,
     color: '#FFFFFF',
   },
   searchContainer: {
-    marginBottom: 24,
+    marginBottom: 28,
   },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.06)',
-    borderRadius: 14,
+    backgroundColor: 'rgba(255,255,255,0.04)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.08)',
+    borderRadius: 12,
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 14,
     gap: 12,
   },
   searchInput: {
@@ -183,13 +185,14 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   categoriesContainer: {
-    gap: 14,
+    gap: 12,
   },
   categoryCard: {
-    height: 110,
-    borderRadius: 16,
-    marginBottom: 14,
+    height: 100,
+    borderRadius: 12,
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.06)',
   },
   categoryImage: {
     width: '100%',
@@ -211,13 +214,13 @@ const styles = StyleSheet.create({
   },
   categoryName: {
     color: '#FFFFFF',
-    fontSize: 17,
-    fontWeight: '500',
-    letterSpacing: 2,
+    fontSize: 15,
+    fontWeight: '600',
+    letterSpacing: 1.5,
     marginBottom: 4,
   },
   categorySubtitle: {
-    color: 'rgba(255,255,255,0.55)',
+    color: 'rgba(255,255,255,0.6)',
     fontSize: 13,
   },
 });

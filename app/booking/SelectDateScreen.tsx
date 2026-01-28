@@ -162,15 +162,15 @@ export default function SelectDateScreen({ navigation, route }: SelectDateScreen
         {/* Legend */}
         <View style={styles.legend}>
           <View style={styles.legendItem}>
-            <Text style={styles.legendDot}>●</Text>
+            <View style={styles.legendDot} />
             <Text style={styles.legendText}>Available</Text>
           </View>
           <View style={styles.legendItem}>
-            <Text style={styles.legendCircle}>○</Text>
+            <View style={styles.legendCircle} />
             <Text style={styles.legendText}>Limited</Text>
           </View>
           <View style={styles.legendItem}>
-            <Text style={styles.legendDash}>-</Text>
+            <View style={styles.legendDash} />
             <Text style={styles.legendText}>Closed</Text>
           </View>
         </View>
@@ -241,12 +241,17 @@ const styles = StyleSheet.create({
   },
   calendar: {
     marginBottom: Spacing.xl,
+    backgroundColor: 'rgba(255,255,255,0.02)',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.06)',
+    padding: 20,
   },
   monthHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: Spacing.base,
+    marginBottom: 20,
   },
   monthArrow: {
     color: TextColors.primary,
@@ -254,22 +259,27 @@ const styles = StyleSheet.create({
     padding: Spacing.sm,
   },
   monthText: {
-    color: TextColors.primary,
-    fontSize: Typography.fontSize.base,
+    color: '#FFFFFF',
+    fontSize: 17,
     fontWeight: '600',
+    letterSpacing: 0.5,
   },
   daysOfWeek: {
     flexDirection: 'row',
-    marginBottom: Spacing.sm,
+    marginBottom: 16,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255,255,255,0.06)',
   },
   dayOfWeek: {
     flex: 1,
     alignItems: 'center',
   },
   dayOfWeekText: {
-    color: TextColors.secondary,
-    fontSize: Typography.fontSize.xs,
-    fontWeight: '500',
+    color: 'rgba(255,255,255,0.4)',
+    fontSize: 12,
+    fontWeight: '600',
+    letterSpacing: 0.5,
   },
   calendarGrid: {
     flexDirection: 'row',
@@ -280,55 +290,60 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: Spacing.xs,
+    marginBottom: 4,
   },
   todayCell: {
-    borderWidth: 1,
-    borderColor: AccentColors.primary,
-    borderRadius: BorderRadius.base,
+    borderWidth: 1.5,
+    borderColor: 'rgba(86,132,196,0.5)',
+    borderRadius: 10,
   },
   selectedCell: {
-    backgroundColor: AccentColors.primary,
-    borderRadius: BorderRadius.base,
+    backgroundColor: '#5684C4',
+    borderRadius: 10,
   },
   dayText: {
-    color: TextColors.primary,
-    fontSize: Typography.fontSize.base,
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '500',
   },
   pastDayText: {
-    color: TextColors.tertiary,
-    opacity: 0.5,
+    color: 'rgba(255,255,255,0.2)',
   },
   selectedDayText: {
-    color: BrandColors.black,
-    fontWeight: '600',
+    color: '#FFFFFF',
+    fontWeight: '700',
   },
   legend: {
     flexDirection: 'row',
     justifyContent: 'center',
-    gap: Spacing.lg,
+    gap: 24,
     marginBottom: Spacing.xl * 2,
   },
   legendItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.xs,
+    gap: 8,
   },
   legendDot: {
-    color: AccentColors.primary,
-    fontSize: Typography.fontSize.base,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#5684C4',
   },
   legendCircle: {
-    color: TextColors.secondary,
-    fontSize: Typography.fontSize.base,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: 'rgba(255,255,255,0.3)',
   },
   legendDash: {
-    color: TextColors.tertiary,
-    fontSize: Typography.fontSize.base,
+    width: 8,
+    height: 2,
+    backgroundColor: 'rgba(255,255,255,0.2)',
   },
   legendText: {
-    color: TextColors.secondary,
-    fontSize: Typography.fontSize.xs,
+    color: 'rgba(255,255,255,0.5)',
+    fontSize: 12,
   },
   bottomButtonContainer: {
     padding: Spacing.xl,

@@ -161,9 +161,7 @@ export default function ProfileScreen({ navigation }: ProfileScreenProps) {
               onPress={() => navigation.navigate('SevenKCard')}
               activeOpacity={0.95}
             >
-              <View style={{ transform: [{ scale: 0.85 }] }}>
-                {renderMemberCard()}
-              </View>
+              {renderMemberCard()}
             </TouchableOpacity>
 
             {/* Stats Row */}
@@ -204,10 +202,12 @@ export default function ProfileScreen({ navigation }: ProfileScreenProps) {
               onPress={() => handleMenuPress(item.screen)}
             >
               <View style={styles.menuItemLeft}>
-                <item.icon size={20} color={TextColors.secondary} strokeWidth={1.5} />
+                <View style={styles.menuIconContainer}>
+                  <item.icon size={18} color="#5684C4" strokeWidth={1.5} />
+                </View>
                 <Text style={styles.menuItemText}>{item.label}</Text>
               </View>
-              <ChevronRight size={20} color={TextColors.tertiary} strokeWidth={1.5} />
+              <ChevronRight size={18} color="rgba(255,255,255,0.3)" strokeWidth={2} />
             </TouchableOpacity>
           ))}
           {/* The 7K Card */}
@@ -216,10 +216,12 @@ export default function ProfileScreen({ navigation }: ProfileScreenProps) {
             onPress={() => navigation.navigate('SevenKCard')}
           >
             <View style={styles.menuItemLeft}>
-              <CreditCard size={20} color={TextColors.secondary} strokeWidth={1.5} />
+              <View style={styles.menuIconContainer}>
+                <CreditCard size={18} color="#5684C4" strokeWidth={1.5} />
+              </View>
               <Text style={styles.menuItemText}>The 7K Card</Text>
             </View>
-            <ChevronRight size={20} color={TextColors.tertiary} strokeWidth={1.5} />
+            <ChevronRight size={18} color="rgba(255,255,255,0.3)" strokeWidth={2} />
           </TouchableOpacity>
         </View>
 
@@ -235,10 +237,12 @@ export default function ProfileScreen({ navigation }: ProfileScreenProps) {
               onPress={() => handleMenuPress(item.screen)}
             >
               <View style={styles.menuItemLeft}>
-                <item.icon size={20} color={TextColors.secondary} strokeWidth={1.5} />
+                <View style={styles.menuIconContainer}>
+                  <item.icon size={18} color="#5684C4" strokeWidth={1.5} />
+                </View>
                 <Text style={styles.menuItemText}>{item.label}</Text>
               </View>
-              <ChevronRight size={20} color={TextColors.tertiary} strokeWidth={1.5} />
+              <ChevronRight size={18} color="rgba(255,255,255,0.3)" strokeWidth={2} />
             </TouchableOpacity>
           ))}
         </View>
@@ -255,10 +259,12 @@ export default function ProfileScreen({ navigation }: ProfileScreenProps) {
               onPress={() => handleMenuPress(item.screen)}
             >
               <View style={styles.menuItemLeft}>
-                <item.icon size={20} color={TextColors.secondary} strokeWidth={1.5} />
+                <View style={styles.menuIconContainer}>
+                  <item.icon size={18} color="#5684C4" strokeWidth={1.5} />
+                </View>
                 <Text style={styles.menuItemText}>{item.label}</Text>
               </View>
-              <ChevronRight size={20} color={TextColors.tertiary} strokeWidth={1.5} />
+              <ChevronRight size={18} color="rgba(255,255,255,0.3)" strokeWidth={2} />
             </TouchableOpacity>
           ))}
         </View>
@@ -291,52 +297,49 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.xl,
   },
   header: {
-    marginBottom: Spacing.xl,
+    marginBottom: Spacing.lg,
   },
   title: {
-    color: TextColors.primary,
-    fontSize: Typography.fontSize['2xl'],
-    fontFamily: Typography.fontFamily.light,
+    color: '#FFFFFF',
+    fontSize: 28,
+    fontWeight: '600',
+    letterSpacing: 0.5,
   },
   cardContainer: {
     alignItems: 'center',
-    marginBottom: Spacing.base,
-    shadowColor: '#5684C4',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.3,
-    shadowRadius: 20,
-    elevation: 10,
+    marginBottom: Spacing.lg,
   },
   statsRow: {
     flexDirection: 'row',
-    backgroundColor: BackgroundColors.cardBg,
-    borderRadius: 14,
+    backgroundColor: 'rgba(255,255,255,0.03)',
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: AccentColors.borderLight,
-    marginBottom: Spacing.base,
+    borderColor: 'rgba(255,255,255,0.08)',
+    marginBottom: Spacing.xl,
     overflow: 'hidden',
-    ...Shadows.sm,
   },
   statItem: {
     flex: 1,
     alignItems: 'center',
-    paddingVertical: Spacing.base,
+    paddingVertical: Spacing.lg,
   },
   statValue: {
     color: TextColors.primary,
-    fontSize: Typography.fontSize['2xl'],
+    fontSize: 32,
     fontFamily: Typography.fontFamily.bold,
+    marginBottom: 2,
   },
   statLabel: {
-    color: TextColors.secondary,
-    fontSize: Typography.fontSize.xs,
+    color: 'rgba(255,255,255,0.5)',
+    fontSize: 11,
     fontFamily: Typography.fontFamily.regular,
-    marginTop: Spacing.xs,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
   },
   statDivider: {
     width: 1,
-    backgroundColor: 'rgba(255,255,255,0.06)',
-    marginVertical: 12,
+    backgroundColor: 'rgba(255,255,255,0.08)',
+    marginVertical: 16,
   },
   loadingContainer: {
     alignItems: 'center',
@@ -352,64 +355,77 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    backgroundColor: AccentColors.border,
-    marginVertical: Spacing.xl,
+    backgroundColor: 'rgba(255,255,255,0.06)',
+    marginVertical: 20,
   },
   sectionHeader: {
-    color: TextColors.secondary,
-    fontSize: Typography.fontSize.xs,
+    color: 'rgba(255,255,255,0.4)',
+    fontSize: 11,
     fontFamily: Typography.fontFamily.semibold,
-    letterSpacing: Typography.letterSpacing.normal,
-    marginBottom: Spacing.base,
+    letterSpacing: 1.5,
+    marginBottom: Spacing.md,
   },
   menuList: {
-    marginBottom: Spacing.sm,
+    marginBottom: Spacing.xs,
   },
   menuItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: BackgroundColors.cardBg,
+    backgroundColor: 'rgba(255,255,255,0.03)',
     borderWidth: 1,
-    borderColor: AccentColors.borderLight,
+    borderColor: 'rgba(255,255,255,0.06)',
     borderRadius: 12,
     padding: Spacing.base,
     minHeight: 56,
-    marginBottom: Spacing.sm,
-    ...Shadows.sm,
+    marginBottom: 8,
   },
   menuItemLeft: {
     flexDirection: 'row',
     alignItems: 'center',
   },
+  menuIconContainer: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    backgroundColor: 'rgba(86,132,196,0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   menuItemText: {
-    color: TextColors.primary,
-    fontSize: Typography.fontSize.base,
-    fontFamily: Typography.fontFamily.semibold,
-    marginLeft: Spacing.base,
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '500',
+    marginLeft: 14,
   },
   logOutButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: Spacing.base,
-    marginBottom: Spacing.base,
+    paddingVertical: 16,
+    marginTop: 8,
+    marginBottom: 12,
+    backgroundColor: 'rgba(255,255,255,0.03)',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.06)',
   },
   logOutText: {
-    color: TextColors.secondary,
-    fontSize: Typography.fontSize.base,
-    marginLeft: Spacing.sm,
+    color: 'rgba(255,255,255,0.7)',
+    fontSize: 15,
+    fontWeight: '500',
+    marginLeft: 10,
   },
   deleteAccountButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: Spacing.base,
-    marginBottom: Spacing.xl * 2,
+    paddingVertical: 12,
+    marginBottom: 40,
   },
   deleteAccountText: {
-    color: TextColors.tertiary,
-    fontSize: Typography.fontSize.sm,
-    marginLeft: Spacing.sm,
+    color: 'rgba(255,255,255,0.35)',
+    fontSize: 13,
+    marginLeft: 8,
   },
 });
