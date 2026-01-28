@@ -5,7 +5,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Search, ChevronRight, Calendar, Users, Clock, Sparkles } from 'lucide-react-native';
 import { useAuth } from '../../src/contexts/AuthContext';
-import { getUserProfile, getBookings } from '../../src/services/api';
+import { getUserProfile, getUserBookings } from '../../src/services/api';
 import type { User, Booking } from '../../src/types/database';
 
 interface HomeScreenProps {
@@ -76,7 +76,7 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
             setUser(profileResult.user);
           }
 
-          const bookingsResult = await getBookings();
+          const bookingsResult = await getUserBookings();
           if (bookingsResult.bookings && bookingsResult.bookings.length > 0) {
             // Find the next upcoming confirmed booking
             const now = new Date();
