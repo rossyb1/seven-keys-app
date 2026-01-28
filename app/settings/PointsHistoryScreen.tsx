@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { BrandColors, BackgroundColors, TextColors, AccentColors, Spacing, Typography, BorderRadius, StatusColors, Shadows } from '../../constants/brand';
 import { ChevronLeft, Check, Users, Heart, Edit, CreditCard } from '../../components/icons/AppIcons';
 import { getPointsHistory } from '../../src/services/api';
@@ -149,7 +150,7 @@ export default function PointsHistoryScreen({ navigation }: PointsHistoryScreenP
 
   const groupedTransactions = groupTransactionsByMonth(transactions);
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={styles.header}>
@@ -228,7 +229,7 @@ export default function PointsHistoryScreen({ navigation }: PointsHistoryScreenP
           </View>
         )}
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 

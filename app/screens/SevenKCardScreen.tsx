@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { BrandColors, BackgroundColors, TextColors, AccentColors, Spacing, Typography, BorderRadius } from '../../constants/brand';
 import SevenKCard from '../../components/cards/SevenKCard';
@@ -164,7 +165,7 @@ export default function SevenKCardScreen({ navigation }: SevenKCardScreenProps) 
   const tierProgress = user ? getTierProgress() : null;
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={styles.header}>
@@ -274,7 +275,7 @@ export default function SevenKCardScreen({ navigation }: SevenKCardScreenProps) 
           <Text style={styles.pointsHistoryLinkText}>View Points History</Text>
         </TouchableOpacity>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 

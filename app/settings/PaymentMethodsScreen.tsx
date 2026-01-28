@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { BrandColors, BackgroundColors, TextColors, AccentColors, Spacing, Typography, BorderRadius, Shadows } from '../../constants/brand';
 import { ChevronLeft, CreditCard, Wallet, Check } from '../../components/icons/AppIcons';
 
@@ -9,7 +10,7 @@ interface PaymentMethodsScreenProps {
 
 export default function PaymentMethodsScreen({ navigation }: PaymentMethodsScreenProps) {
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={styles.header}>
@@ -61,7 +62,7 @@ export default function PaymentMethodsScreen({ navigation }: PaymentMethodsScree
           </View>
         </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 

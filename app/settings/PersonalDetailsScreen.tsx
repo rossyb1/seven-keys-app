@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Image, ActivityIndicator, Alert } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { BrandColors, BackgroundColors, TextColors, AccentColors, Spacing, Typography, BorderRadius, StatusColors, Shadows } from '../../constants/brand';
 import { ChevronLeft, Camera } from '../../components/icons/AppIcons';
 import PrimaryButton from '../../components/buttons/PrimaryButton';
@@ -123,7 +124,7 @@ export default function PersonalDetailsScreen({ navigation }: PersonalDetailsScr
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={styles.header}>
@@ -263,14 +264,14 @@ export default function PersonalDetailsScreen({ navigation }: PersonalDetailsScr
           />
         </View>
       )}
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: BackgroundColors.primary,
+    backgroundColor: '#0A1628',
   },
   content: {
     flex: 1,
