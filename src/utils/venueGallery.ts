@@ -47,6 +47,7 @@ export const venueGallery: Record<string, any[]> = {
     require('../../Images/carbone-gallery-2.jpg'),
     require('../../Images/carbone-gallery-3.jpg'),
     require('../../Images/carbone-gallery-4.jpg'),
+    require('../../Images/carbone-gallery-5.jpg'),
   ],
 };
 
