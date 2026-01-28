@@ -42,6 +42,12 @@ export const venueGallery: Record<string, any[]> = {
     require('../../Images/verdebeach-3.jpg'),
     require('../../Images/verdebeach-4.jpg'),
   ],
+  'Carbone': [
+    require('../../Images/carbone-gallery-1.jpg'),
+    require('../../Images/carbone-gallery-2.jpg'),
+    require('../../Images/carbone-gallery-3.jpg'),
+    require('../../Images/carbone-gallery-4.jpg'),
+  ],
 };
 
 export const getVenueGallery = (venueName: string): any[] | null => {
