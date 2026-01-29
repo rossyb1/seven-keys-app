@@ -1181,6 +1181,51 @@ export async function processReferral(
   }
 }
 
+// Optimized: Get profile + referral info in one call (for ProfileScreen)
+export async function getProfileWithReferrals(): Promise<{
+  user: User | null;
+  referralCode: string | null;
+  referralCount: number;
+  totalPointsEarned: number;
+  error?: string;
+}> {
+  try {
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+    if (!authUser) {
+      return { user: null, referralCode: null, referralCount: 0, totalPointsEarned: 0, error: 'Not authenticated' };
+    }
+
+    // Fetch user profile and referral count in parallel
+    const [profileResult, referralResult] = await Promise.all([
+      supabase
+        .from('users')
+        .select('*')
+        .eq('id', authUser.id)
+        .single(),
+      supabase
+        .from('referrals')
+        .select('*', { count: 'exact', head: true })
+        .eq('referrer_id', authUser.id),
+    ]);
+
+    if (profileResult.error) {
+      return { user: null, referralCode: null, referralCount: 0, totalPointsEarned: 0, error: profileResult.error.message };
+    }
+
+    const referralCount = referralResult.count || 0;
+    const totalPointsEarned = referralCount * REFERRAL_POINTS;
+
+    return {
+      user: profileResult.data as User,
+      referralCode: profileResult.data?.referral_code || null,
+      referralCount,
+      totalPointsEarned,
+    };
+  } catch (error: any) {
+    return { user: null, referralCode: null, referralCount: 0, totalPointsEarned: 0, error: error.message };
+  }
+}
+
 export async function getUserReferralInfo(): Promise<{
   referralCode: string | null;
   referralCount: number;

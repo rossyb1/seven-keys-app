@@ -4,7 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { User, CreditCard, MapPin, Bell, BarChart3, MessageCircle, HelpCircle, LogOut, Trash2, ChevronRight, Gift, Copy, Users } from 'lucide-react-native';
 import { BrandColors, BackgroundColors, TextColors, AccentColors, Spacing, Typography, BorderRadius, Shadows } from '../../constants/brand';
-import { getUserProfile, getUserReferralInfo, signOut } from '../../src/services/api';
+import { getProfileWithReferrals, signOut } from '../../src/services/api';
 import { useAuth } from '../../src/contexts/AuthContext';
 import type { User as UserType } from '../../src/types/database';
 import { BlueCard, SilverCard, GoldCard, BlackCard } from '../../src/components/cards/membership';
@@ -43,17 +43,15 @@ export default function ProfileScreen({ navigation }: ProfileScreenProps) {
       const fetchProfile = async () => {
         setIsLoading(true);
         try {
-          const result = await getUserProfile();
+          // Optimized: single call for profile + referral info
+          const result = await getProfileWithReferrals();
           if (result.error) {
             console.error('Error fetching profile:', result.error);
           } else {
             setUser(result.user);
+            setReferralCode(result.referralCode);
+            setReferralCount(result.referralCount);
           }
-
-          // Fetch referral info
-          const refInfo = await getUserReferralInfo();
-          setReferralCode(refInfo.referralCode);
-          setReferralCount(refInfo.referralCount);
         } catch (err: any) {
           console.error('Error fetching profile:', err);
         } finally {
