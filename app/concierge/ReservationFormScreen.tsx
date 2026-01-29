@@ -38,12 +38,13 @@ export default function ReservationFormScreen({ navigation, route }: Reservation
   const insets = useSafeAreaInsets();
   const { user } = useAuth();
   const preFilledVenue = route?.params?.venue as Venue | undefined;
+  const preFilledVenueType = route?.params?.venueType as string | undefined;
 
   const [venues, setVenues] = useState<Venue[]>([]);
   const [selectedVenue, setSelectedVenue] = useState<Venue | null>(preFilledVenue || null);
   const [showVenuePicker, setShowVenuePicker] = useState(false);
   const [venueSearch, setVenueSearch] = useState('');
-  const [venueTypeFilter, setVenueTypeFilter] = useState<string | null>(null);
+  const [venueTypeFilter, setVenueTypeFilter] = useState<string | null>(preFilledVenueType || null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
@@ -351,31 +352,34 @@ export default function ReservationFormScreen({ navigation, route }: Reservation
             </View>
 
             {/* Type Tabs */}
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.venueTypeTabs}>
-              {[
-                { key: null, label: 'All' },
-                { key: 'restaurant', label: 'Restaurants' },
-                { key: 'beach_club', label: 'Beach Clubs' },
-                { key: 'nightclub', label: 'Nightclubs' },
-                { key: 'event', label: 'Events' },
-              ].map((tab) => (
-                <TouchableOpacity
-                  key={tab.key || 'all'}
-                  style={[
-                    styles.venueTypeTab,
-                    venueTypeFilter === tab.key && styles.venueTypeTabActive,
-                  ]}
-                  onPress={() => setVenueTypeFilter(tab.key)}
-                >
-                  <Text style={[
-                    styles.venueTypeTabText,
-                    venueTypeFilter === tab.key && styles.venueTypeTabTextActive,
-                  ]}>
-                    {tab.label}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
+            {/* Type Tabs - only show if type wasn't pre-selected */}
+            {!preFilledVenueType && (
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.venueTypeTabs}>
+                {[
+                  { key: null, label: 'All' },
+                  { key: 'restaurant', label: 'Restaurants' },
+                  { key: 'beach_club', label: 'Beach Clubs' },
+                  { key: 'nightclub', label: 'Nightclubs' },
+                  { key: 'event', label: 'Events' },
+                ].map((tab) => (
+                  <TouchableOpacity
+                    key={tab.key || 'all'}
+                    style={[
+                      styles.venueTypeTab,
+                      venueTypeFilter === tab.key && styles.venueTypeTabActive,
+                    ]}
+                    onPress={() => setVenueTypeFilter(tab.key)}
+                  >
+                    <Text style={[
+                      styles.venueTypeTabText,
+                      venueTypeFilter === tab.key && styles.venueTypeTabTextActive,
+                    ]}>
+                      {tab.label}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            )}
 
             {/* Venue List */}
             <ScrollView style={styles.venueList}>
