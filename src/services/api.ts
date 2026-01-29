@@ -256,6 +256,13 @@ export async function createUser(userData: {
           const { data: authData, error: authError } = await supabase.auth.signUp({
             email: userData.email,
             password: randomPassword,
+            options: {
+              data: {
+                full_name: userData.full_name,
+                phone: userData.phone,
+                invite_code: userData.invite_code,
+              }
+            }
           });
           
           console.log('📥 auth.signUp response:');
