@@ -448,30 +448,39 @@ export default function ReservationFormScreen({ navigation, route }: Reservation
       {/* Time Picker Modal */}
       <Modal visible={showTimePicker} transparent animationType="slide">
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Select Time</Text>
-              <TouchableOpacity onPress={() => setShowTimePicker(false)}>
-                <Text style={styles.modalClose}>Done</Text>
-              </TouchableOpacity>
+          <View style={styles.timePickerContent}>
+            <Text style={styles.timePickerTitle}>Select Time</Text>
+            <View style={styles.timeGrid}>
+              {TIME_SLOTS.map((time) => {
+                const isSelected = selectedTime === time;
+                return (
+                  <TouchableOpacity
+                    key={time}
+                    style={[
+                      styles.timeSlot,
+                      isSelected && styles.timeSlotSelected,
+                    ]}
+                    onPress={() => {
+                      setSelectedTime(time);
+                      setShowTimePicker(false);
+                    }}
+                  >
+                    <Text style={[
+                      styles.timeSlotText,
+                      isSelected && styles.timeSlotTextSelected,
+                    ]}>
+                      {formatTimeForAPI(time)}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
             </View>
-            <ScrollView>
-              {TIME_SLOTS.map((time) => (
-                <TouchableOpacity
-                  key={time}
-                  style={styles.modalItem}
-                  onPress={() => {
-                    setSelectedTime(time);
-                    setShowTimePicker(false);
-                  }}
-                >
-                  <Text style={styles.modalItemText}>{formatTimeForAPI(time)}</Text>
-                  {selectedTime === time && (
-                    <Text style={styles.modalItemCheck}>✓</Text>
-                  )}
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
+            <TouchableOpacity
+              style={styles.timePickerDone}
+              onPress={() => setShowTimePicker(false)}
+            >
+              <Text style={styles.timePickerDoneText}>Done</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
@@ -692,6 +701,57 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   calendarDoneText: {
+    fontSize: 16,
+    color: ACCENT_COLOR,
+    fontWeight: '600',
+  },
+  timePickerContent: {
+    backgroundColor: INPUT_BG,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 20,
+  },
+  timePickerTitle: {
+    fontSize: 17,
+    fontWeight: '600',
+    color: '#FFFFFF',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  timeGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+  },
+  timeSlot: {
+    width: '31%',
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.12)',
+    borderRadius: 10,
+    padding: 14,
+    alignItems: 'center',
+    minHeight: 48,
+    justifyContent: 'center',
+  },
+  timeSlotSelected: {
+    borderColor: 'rgba(86,132,196,0.5)',
+    borderWidth: 1.5,
+    backgroundColor: 'rgba(86,132,196,0.12)',
+  },
+  timeSlotText: {
+    color: 'rgba(255,255,255,0.8)',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  timeSlotTextSelected: {
+    color: ACCENT_COLOR,
+  },
+  timePickerDone: {
+    marginTop: 20,
+    alignItems: 'center',
+  },
+  timePickerDoneText: {
     fontSize: 16,
     color: ACCENT_COLOR,
     fontWeight: '600',
