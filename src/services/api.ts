@@ -843,6 +843,63 @@ export async function getUserBookings(): Promise<{
   }
 }
 
+// Optimized: Get only the next upcoming booking (for homepage)
+export async function getNextUpcomingBooking(): Promise<{
+  booking: (Booking & { venue: Pick<Venue, 'id' | 'name' | 'type' | 'location' | 'photos'> }) | null;
+  error?: string;
+}> {
+  try {
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      return { booking: null, error: 'You must be logged in' };
+    }
+
+    // Get today's date in YYYY-MM-DD format
+    const today = new Date().toISOString().split('T')[0];
+
+    // Query only upcoming bookings, limit 1, sorted by date ascending (nearest first)
+    const { data, error } = await supabase
+      .from('bookings')
+      .select(`
+        *,
+        venues (
+          id,
+          name,
+          type,
+          location,
+          photos
+        )
+      `)
+      .eq('user_id', user.id)
+      .in('status', ['pending', 'confirmed', 'deposit_pending', 'deposit_confirmed'])
+      .gte('booking_date', today)
+      .order('booking_date', { ascending: true })
+      .order('booking_time', { ascending: true })
+      .limit(1)
+      .single();
+
+    if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
+      return { booking: null, error: error.message };
+    }
+
+    if (!data) {
+      return { booking: null };
+    }
+
+    // Transform to match return type
+    const booking = {
+      ...data,
+      venue: data.venues,
+    };
+    delete (booking as any).venues;
+
+    return { booking: booking as Booking & { venue: Pick<Venue, 'id' | 'name' | 'type' | 'location' | 'photos'> } };
+  } catch (error: any) {
+    return { booking: null, error: error.message || 'Failed to fetch booking' };
+  }
+}
+
 export async function getBookingById(bookingId: string): Promise<{
   booking: (Booking & { venue: Venue }) | null;
   error?: string;

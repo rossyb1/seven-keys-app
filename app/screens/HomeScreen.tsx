@@ -5,7 +5,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ChevronRight, Calendar, Users, Clock, Sparkles, ArrowRight, Compass, LayoutGrid } from 'lucide-react-native';
 import { useAuth } from '../../src/contexts/AuthContext';
-import { getUserProfile, getUserBookings } from '../../src/services/api';
+import { getUserProfile, getNextUpcomingBooking } from '../../src/services/api';
 import AnimatedPressable from '../../src/components/AnimatedPressable';
 import type { User, Booking } from '../../src/types/database';
 
@@ -85,21 +85,9 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
             setUser(profileResult.user);
           }
 
-          const bookingsResult = await getUserBookings();
-          if (bookingsResult.bookings && bookingsResult.bookings.length > 0) {
-            // Find the next upcoming booking (confirmed or pending)
-            const now = new Date();
-            const activeStatuses = ['confirmed', 'pending', 'deposit_pending', 'deposit_confirmed', 'counter_offer', 'awaiting_info'];
-            const upcoming = bookingsResult.bookings
-              .filter((b: any) => 
-                activeStatuses.includes(b.status) && 
-                new Date(`${b.booking_date}T${b.booking_time || '00:00'}`) > now
-              )
-              .sort((a: any, b: any) => 
-                new Date(`${a.booking_date}T${a.booking_time || '00:00'}`).getTime() - new Date(`${b.booking_date}T${b.booking_time || '00:00'}`).getTime()
-              )[0];
-            setUpcomingBooking(upcoming || null);
-          }
+          // Optimized: fetch only the next upcoming booking server-side
+          const bookingResult = await getNextUpcomingBooking();
+          setUpcomingBooking(bookingResult.booking || null);
         } catch (error) {
           console.error('Error fetching home data:', error);
         } finally {
