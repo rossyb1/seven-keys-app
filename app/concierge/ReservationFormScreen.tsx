@@ -11,7 +11,7 @@ import {
   Alert,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ChevronLeft, ChevronDown } from 'lucide-react-native';
+import { ChevronLeft, ChevronDown, ChevronRight } from 'lucide-react-native';
 import { useAuth } from '../../src/contexts/AuthContext';
 import { getVenues, createBooking } from '../../src/services/api';
 import type { Venue } from '../../src/types/database';
@@ -362,46 +362,84 @@ export default function ReservationFormScreen({ navigation, route }: Reservation
       {/* Date Picker Modal */}
       <Modal visible={showDatePicker} transparent animationType="slide">
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <TouchableOpacity onPress={() => {
-                setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1));
-              }}>
-                <Text style={styles.modalNav}>‹</Text>
-              </TouchableOpacity>
-              <Text style={styles.modalTitle}>
-                {currentMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-              </Text>
-              <TouchableOpacity onPress={() => {
-                setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1));
-              }}>
-                <Text style={styles.modalNav}>›</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.calendar}>
-              {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((day) => (
-                <Text key={day} style={styles.calendarHeader}>{day}</Text>
-              ))}
-              {days.map((day, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={[
-                    styles.calendarDay,
-                    day && isPastDate(day) && styles.calendarDayDisabled,
-                    day && selectedDate && new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day).getTime() === selectedDate.getTime() && styles.calendarDaySelected,
-                  ]}
-                  onPress={() => day && handleDateSelect(day)}
-                  disabled={!day || isPastDate(day)}
+          <View style={styles.datePickerContent}>
+            {/* Calendar Card */}
+            <View style={styles.calendarCard}>
+              {/* Month Header */}
+              <View style={styles.calendarMonthHeader}>
+                <TouchableOpacity 
+                  style={styles.calendarNavButton}
+                  onPress={() => {
+                    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1));
+                  }}
                 >
-                  {day && <Text style={styles.calendarDayText}>{day}</Text>}
+                  <ChevronLeft size={20} color="#FFFFFF" strokeWidth={1.5} />
                 </TouchableOpacity>
-              ))}
+                <Text style={styles.calendarMonthText}>
+                  {currentMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                </Text>
+                <TouchableOpacity 
+                  style={styles.calendarNavButton}
+                  onPress={() => {
+                    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1));
+                  }}
+                >
+                  <ChevronRight size={20} color="#FFFFFF" strokeWidth={1.5} />
+                </TouchableOpacity>
+              </View>
+
+              {/* Days of Week */}
+              <View style={styles.calendarDaysOfWeek}>
+                {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((day) => (
+                  <View key={day} style={styles.calendarDayOfWeek}>
+                    <Text style={styles.calendarDayOfWeekText}>{day}</Text>
+                  </View>
+                ))}
+              </View>
+
+              {/* Calendar Grid */}
+              <View style={styles.calendarGrid}>
+                {days.map((day, index) => {
+                  const isDisabled = day ? isPastDate(day) : true;
+                  const isSelected = day && selectedDate && 
+                    new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day).getTime() === selectedDate.getTime();
+                  const isCurrentDay = day && 
+                    new Date().getDate() === day && 
+                    new Date().getMonth() === currentMonth.getMonth() && 
+                    new Date().getFullYear() === currentMonth.getFullYear();
+                  
+                  return (
+                    <TouchableOpacity
+                      key={index}
+                      style={[
+                        styles.calendarDayCell,
+                        isCurrentDay && !isSelected && styles.calendarDayToday,
+                        isSelected && styles.calendarDaySelected,
+                      ]}
+                      onPress={() => day && handleDateSelect(day)}
+                      disabled={!day || isDisabled}
+                    >
+                      {day && (
+                        <Text style={[
+                          styles.calendarDayText,
+                          isDisabled && styles.calendarDayTextDisabled,
+                          isSelected && styles.calendarDayTextSelected,
+                        ]}>
+                          {day}
+                        </Text>
+                      )}
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
             </View>
+
+            {/* Done Button */}
             <TouchableOpacity
-              style={styles.modalDone}
+              style={styles.calendarDoneButton}
               onPress={() => setShowDatePicker(false)}
             >
-              <Text style={styles.modalDoneText}>Done</Text>
+              <Text style={styles.calendarDoneText}>Done</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -572,6 +610,92 @@ const styles = StyleSheet.create({
     color: ACCENT_COLOR,
     fontWeight: '600',
   },
+  datePickerContent: {
+    backgroundColor: INPUT_BG,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 20,
+  },
+  calendarCard: {
+    backgroundColor: 'rgba(255,255,255,0.02)',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
+    padding: 20,
+  },
+  calendarMonthHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  calendarNavButton: {
+    padding: 8,
+  },
+  calendarMonthText: {
+    color: '#FFFFFF',
+    fontSize: 17,
+    fontWeight: '600',
+    letterSpacing: 0.5,
+  },
+  calendarDaysOfWeek: {
+    flexDirection: 'row',
+    marginBottom: 16,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255,255,255,0.06)',
+  },
+  calendarDayOfWeek: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  calendarDayOfWeekText: {
+    color: 'rgba(255,255,255,0.4)',
+    fontSize: 12,
+    fontWeight: '600',
+    letterSpacing: 0.5,
+  },
+  calendarGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  calendarDayCell: {
+    width: '14.28%',
+    aspectRatio: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  calendarDayToday: {
+    borderWidth: 1.5,
+    borderColor: 'rgba(86,132,196,0.5)',
+    borderRadius: 10,
+  },
+  calendarDaySelected: {
+    backgroundColor: ACCENT_COLOR,
+    borderRadius: 10,
+  },
+  calendarDayText: {
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '500',
+  },
+  calendarDayTextDisabled: {
+    color: 'rgba(255,255,255,0.2)',
+  },
+  calendarDayTextSelected: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+  },
+  calendarDoneButton: {
+    marginTop: 20,
+    alignItems: 'center',
+  },
+  calendarDoneText: {
+    fontSize: 16,
+    color: ACCENT_COLOR,
+    fontWeight: '600',
+  },
   modalItem: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -587,46 +711,6 @@ const styles = StyleSheet.create({
   modalItemCheck: {
     fontSize: 18,
     color: ACCENT_COLOR,
-  },
-  modalDone: {
-    padding: 16,
-    alignItems: 'center',
-  },
-  modalDoneText: {
-    fontSize: 16,
-    color: ACCENT_COLOR,
-    fontWeight: '600',
-  },
-  calendar: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    padding: 16,
-  },
-  calendarHeader: {
-    width: '14.28%',
-    textAlign: 'center',
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#6B7280',
-    marginBottom: 8,
-  },
-  calendarDay: {
-    width: '14.28%',
-    aspectRatio: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  calendarDayDisabled: {
-    opacity: 0.3,
-  },
-  calendarDaySelected: {
-    backgroundColor: ACCENT_COLOR,
-    borderRadius: BORDER_RADIUS,
-  },
-  calendarDayText: {
-    fontSize: 16,
-    color: '#FFFFFF',
   },
   loader: {
     padding: 40,
