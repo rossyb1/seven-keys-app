@@ -42,6 +42,8 @@ export default function ReservationFormScreen({ navigation, route }: Reservation
   const [venues, setVenues] = useState<Venue[]>([]);
   const [selectedVenue, setSelectedVenue] = useState<Venue | null>(preFilledVenue || null);
   const [showVenuePicker, setShowVenuePicker] = useState(false);
+  const [venueSearch, setVenueSearch] = useState('');
+  const [venueTypeFilter, setVenueTypeFilter] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
@@ -327,32 +329,93 @@ export default function ReservationFormScreen({ navigation, route }: Reservation
       {/* Venue Picker Modal */}
       <Modal visible={showVenuePicker} transparent animationType="slide">
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Select Venue</Text>
+          <View style={styles.venuePickerContent}>
+            {/* Header */}
+            <View style={styles.venuePickerHeader}>
+              <Text style={styles.venuePickerTitle}>Select Venue</Text>
               <TouchableOpacity onPress={() => setShowVenuePicker(false)}>
                 <Text style={styles.modalClose}>Done</Text>
               </TouchableOpacity>
             </View>
-            <ScrollView>
+
+            {/* Search */}
+            <View style={styles.venueSearchContainer}>
+              <TextInput
+                style={styles.venueSearchInput}
+                placeholder="Search venues..."
+                placeholderTextColor="#6B7280"
+                value={venueSearch}
+                onChangeText={setVenueSearch}
+                autoCapitalize="none"
+              />
+            </View>
+
+            {/* Type Tabs */}
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.venueTypeTabs}>
+              {[
+                { key: null, label: 'All' },
+                { key: 'restaurant', label: 'Restaurants' },
+                { key: 'beach_club', label: 'Beach Clubs' },
+                { key: 'nightclub', label: 'Nightclubs' },
+                { key: 'event', label: 'Events' },
+              ].map((tab) => (
+                <TouchableOpacity
+                  key={tab.key || 'all'}
+                  style={[
+                    styles.venueTypeTab,
+                    venueTypeFilter === tab.key && styles.venueTypeTabActive,
+                  ]}
+                  onPress={() => setVenueTypeFilter(tab.key)}
+                >
+                  <Text style={[
+                    styles.venueTypeTabText,
+                    venueTypeFilter === tab.key && styles.venueTypeTabTextActive,
+                  ]}>
+                    {tab.label}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+
+            {/* Venue List */}
+            <ScrollView style={styles.venueList}>
               {isLoadingVenues ? (
                 <ActivityIndicator color={ACCENT_COLOR} style={styles.loader} />
               ) : (
-                venues.map((venue) => (
-                  <TouchableOpacity
-                    key={venue.id}
-                    style={styles.modalItem}
-                    onPress={() => {
-                      setSelectedVenue(venue);
-                      setShowVenuePicker(false);
-                    }}
-                  >
-                    <Text style={styles.modalItemText}>{venue.name}</Text>
-                    {selectedVenue?.id === venue.id && (
-                      <Text style={styles.modalItemCheck}>✓</Text>
-                    )}
-                  </TouchableOpacity>
-                ))
+                venues
+                  .filter((v) => {
+                    const matchesType = !venueTypeFilter || v.type === venueTypeFilter;
+                    const matchesSearch = !venueSearch || 
+                      v.name.toLowerCase().includes(venueSearch.toLowerCase());
+                    return matchesType && matchesSearch;
+                  })
+                  .map((venue) => (
+                    <TouchableOpacity
+                      key={venue.id}
+                      style={[
+                        styles.venueItem,
+                        selectedVenue?.id === venue.id && styles.venueItemSelected,
+                      ]}
+                      onPress={() => {
+                        setSelectedVenue(venue);
+                        setShowVenuePicker(false);
+                        setVenueSearch('');
+                      }}
+                    >
+                      <View>
+                        <Text style={styles.venueItemName}>{venue.name}</Text>
+                        <Text style={styles.venueItemType}>
+                          {venue.type === 'restaurant' ? 'Restaurant' :
+                           venue.type === 'beach_club' ? 'Beach Club' :
+                           venue.type === 'nightclub' ? 'Nightclub' : 'Event'}
+                          {venue.location ? ` · ${venue.location}` : ''}
+                        </Text>
+                      </View>
+                      {selectedVenue?.id === venue.id && (
+                        <Text style={styles.modalItemCheck}>✓</Text>
+                      )}
+                    </TouchableOpacity>
+                  ))
               )}
             </ScrollView>
           </View>
@@ -755,6 +818,88 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: ACCENT_COLOR,
     fontWeight: '600',
+  },
+  venuePickerContent: {
+    backgroundColor: INPUT_BG,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    maxHeight: '85%',
+  },
+  venuePickerHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#1A2332',
+  },
+  venuePickerTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
+  venueSearchContainer: {
+    padding: 12,
+    paddingTop: 8,
+  },
+  venueSearchInput: {
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    borderRadius: 10,
+    padding: 12,
+    fontSize: 15,
+    color: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
+  },
+  venueTypeTabs: {
+    paddingHorizontal: 12,
+    paddingBottom: 12,
+    flexGrow: 0,
+  },
+  venueTypeTab: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    marginRight: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
+  },
+  venueTypeTabActive: {
+    backgroundColor: 'rgba(86,132,196,0.15)',
+    borderColor: 'rgba(86,132,196,0.5)',
+  },
+  venueTypeTabText: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: 'rgba(255,255,255,0.6)',
+  },
+  venueTypeTabTextActive: {
+    color: ACCENT_COLOR,
+  },
+  venueList: {
+    maxHeight: 400,
+  },
+  venueItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#1A2332',
+  },
+  venueItemSelected: {
+    backgroundColor: 'rgba(86,132,196,0.1)',
+  },
+  venueItemName: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#FFFFFF',
+    marginBottom: 2,
+  },
+  venueItemType: {
+    fontSize: 13,
+    color: 'rgba(255,255,255,0.5)',
   },
   modalItem: {
     flexDirection: 'row',
