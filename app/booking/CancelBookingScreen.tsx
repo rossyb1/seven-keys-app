@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
-import { ChevronLeft, Check } from '../../components/icons/AppIcons';
-import { BrandColors, BackgroundColors, TextColors, AccentColors, Spacing, Typography, BorderRadius } from '../../constants/brand';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ChevronLeft, Calendar, Clock, Users, AlertTriangle, Check } from 'lucide-react-native';
 import { cancelBooking } from '../../src/services/api';
 import type { Booking } from '../../src/types/database';
 import type { Venue } from '../../src/types/database';
@@ -14,19 +14,25 @@ interface CancelBookingScreenProps {
 }
 
 const CANCELLATION_REASONS = [
-  'Change of plans',
-  'Found a better option',
-  'Travel plans changed',
-  'Emergency',
-  'Other',
+  { id: 'plans', label: 'Change of plans' },
+  { id: 'better', label: 'Found a better option' },
+  { id: 'travel', label: 'Travel plans changed' },
+  { id: 'emergency', label: 'Emergency' },
+  { id: 'other', label: 'Other' },
 ];
 
+const BACKGROUND = '#0A1628';
+const CARD_BG = '#111D2E';
+const ACCENT = '#5684C4';
+const DANGER = '#DC2626';
+const DANGER_MUTED = 'rgba(220, 38, 38, 0.15)';
+
 export default function CancelBookingScreen({ navigation, route }: CancelBookingScreenProps) {
+  const insets = useSafeAreaInsets();
   const booking = route.params?.booking as BookingWithVenue | undefined;
   
   const [selectedReason, setSelectedReason] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!booking) {
@@ -38,7 +44,6 @@ export default function CancelBookingScreen({ navigation, route }: CancelBooking
     return null;
   }
 
-  // Helper function to format date
   const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
     const today = new Date();
@@ -53,11 +58,10 @@ export default function CancelBookingScreen({ navigation, route }: CancelBooking
     } else if (bookingDate.getTime() === tomorrow.getTime()) {
       return 'Tomorrow';
     } else {
-      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
     }
   };
 
-  // Helper function to format time
   const formatTime = (timeString: string): string => {
     if (timeString.includes('PM') || timeString.includes('AM')) {
       return timeString;
@@ -70,141 +74,131 @@ export default function CancelBookingScreen({ navigation, route }: CancelBooking
   };
 
   const handleCancelBooking = async () => {
-    if (!selectedReason) {
-      setError('Please select a cancellation reason');
-      return;
-    }
+    if (!selectedReason) return;
 
     setIsSubmitting(true);
-    setError(null);
 
     try {
-      const result = await cancelBooking(booking.id, selectedReason);
+      const reason = CANCELLATION_REASONS.find(r => r.id === selectedReason)?.label || selectedReason;
+      const result = await cancelBooking(booking.id, reason);
 
       if (result.error) {
-        setError(result.error);
+        Alert.alert('Error', result.error);
         setIsSubmitting(false);
       } else {
-        // Show success message and navigate back
         Alert.alert(
           'Booking Cancelled',
-          'Your booking has been cancelled successfully.',
+          'Your booking has been cancelled.',
           [
             {
               text: 'OK',
-              onPress: () => {
-                // Navigate back to BookingsScreen
-                navigation.navigate('MainTabs', { screen: 'Bookings' });
-              },
+              onPress: () => navigation.navigate('MainTabs', { screen: 'Bookings' }),
             },
           ]
         );
       }
     } catch (err: any) {
-      setError(err.message || 'Failed to cancel booking');
+      Alert.alert('Error', err.message || 'Failed to cancel booking');
       setIsSubmitting(false);
     }
   };
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView 
+        style={styles.scrollView} 
+        contentContainerStyle={[styles.content, { paddingTop: insets.top + 16 }]}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <ChevronLeft size={24} color={TextColors.primary} strokeWidth={1.5} />
+          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+            <ChevronLeft size={24} color="#FFFFFF" strokeWidth={1.5} />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Cancel Booking</Text>
           <View style={styles.headerSpacer} />
         </View>
 
-        {/* Headline */}
-        <Text style={styles.headline}>Are you sure you want to cancel?</Text>
-
-        {/* Booking Summary Card */}
-        <View style={styles.summaryCard}>
-          <Text style={styles.summaryVenueName}>{booking.venue?.name || 'Unknown Venue'}</Text>
-          <Text style={styles.summaryDate}>{formatDate(booking.booking_date)}</Text>
-          <Text style={styles.summaryTime}>{formatTime(booking.booking_time)}</Text>
-          <Text style={styles.summaryGuests}>{booking.party_size} guests</Text>
+        {/* Warning Banner */}
+        <View style={styles.warningBanner}>
+          <AlertTriangle size={20} color={DANGER} strokeWidth={2} />
+          <Text style={styles.warningBannerText}>This action cannot be undone</Text>
         </View>
 
-        {/* Cancellation Reasons */}
-        <Text style={styles.reasonsTitle}>Why are you cancelling?</Text>
-        <View style={styles.reasonsList}>
-          {CANCELLATION_REASONS.map((reason) => (
-            <TouchableOpacity
-              key={reason}
-              style={[
-                styles.reasonOption,
-                selectedReason === reason && styles.reasonOptionSelected,
-              ]}
-              onPress={() => {
-                setSelectedReason(reason);
-                setError(null);
-              }}
-            >
-              <Text
-                style={[
-                  styles.reasonText,
-                  selectedReason === reason && styles.reasonTextSelected,
-                ]}
+        {/* Booking Card */}
+        <View style={styles.bookingCard}>
+          <Text style={styles.venueName}>{booking.venue?.name || 'Venue'}</Text>
+          <View style={styles.bookingDetails}>
+            <View style={styles.detailRow}>
+              <Calendar size={16} color="rgba(255,255,255,0.5)" strokeWidth={1.5} />
+              <Text style={styles.detailText}>{formatDate(booking.booking_date)}</Text>
+            </View>
+            <View style={styles.detailRow}>
+              <Clock size={16} color="rgba(255,255,255,0.5)" strokeWidth={1.5} />
+              <Text style={styles.detailText}>{formatTime(booking.booking_time)}</Text>
+            </View>
+            <View style={styles.detailRow}>
+              <Users size={16} color="rgba(255,255,255,0.5)" strokeWidth={1.5} />
+              <Text style={styles.detailText}>{booking.party_size} guests</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Reason Selection */}
+        <Text style={styles.sectionTitle}>Reason for cancellation</Text>
+        <View style={styles.reasonsContainer}>
+          {CANCELLATION_REASONS.map((reason) => {
+            const isSelected = selectedReason === reason.id;
+            return (
+              <TouchableOpacity
+                key={reason.id}
+                style={[styles.reasonOption, isSelected && styles.reasonOptionSelected]}
+                onPress={() => setSelectedReason(reason.id)}
+                activeOpacity={0.7}
               >
-                {reason}
-              </Text>
-              {selectedReason === reason && (
-                <Check size={20} color={AccentColors.primary} strokeWidth={2} />
-              )}
-            </TouchableOpacity>
-          ))}
+                <View style={[styles.radioOuter, isSelected && styles.radioOuterSelected]}>
+                  {isSelected && <View style={styles.radioInner} />}
+                </View>
+                <Text style={[styles.reasonText, isSelected && styles.reasonTextSelected]}>
+                  {reason.label}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
         </View>
 
-        {/* Error Message */}
-        {error && (
-          <View style={styles.errorContainer}>
-            <Text style={styles.errorText}>{error}</Text>
-          </View>
-        )}
-
-        {/* Warning Box - Only show if deposit was required */}
-        {booking.deposit_required && (
-          <View style={styles.warningBox}>
-            <Text style={styles.warningIcon}>⚠️</Text>
-            <Text style={styles.warningTitle}>CANCELLATION POLICY</Text>
-            <Text style={styles.warningText}>
-              Deposits may be non-refundable depending on venue policy and timing.
-            </Text>
-            {booking.minimum_spend && (
-              <Text style={styles.warningDeposit}>
-                Deposit: AED {booking.minimum_spend.toLocaleString()}
-              </Text>
-            )}
-          </View>
-        )}
+        {/* Policy Notice */}
+        <View style={styles.policyBox}>
+          <Text style={styles.policyTitle}>Cancellation Policy</Text>
+          <Text style={styles.policyText}>
+            Cancellations made less than 24 hours before your booking may affect your membership standing. 
+            {booking.deposit_required && ' Deposits may be non-refundable depending on venue policy.'}
+          </Text>
+        </View>
       </ScrollView>
 
       {/* Bottom Buttons */}
-      <View style={styles.bottomButtonContainer}>
+      <View style={[styles.bottomContainer, { paddingBottom: insets.bottom + 16 }]}>
         <TouchableOpacity
-          style={[
-            styles.cancelButton,
-            (!selectedReason || isSubmitting) && styles.cancelButtonDisabled,
-          ]}
+          style={[styles.cancelButton, !selectedReason && styles.buttonDisabled]}
           onPress={handleCancelBooking}
           disabled={!selectedReason || isSubmitting}
+          activeOpacity={0.8}
         >
           {isSubmitting ? (
-            <ActivityIndicator color={TextColors.primary} />
+            <ActivityIndicator color="#FFFFFF" />
           ) : (
-            <Text style={styles.cancelButtonText}>YES, CANCEL BOOKING</Text>
+            <Text style={styles.cancelButtonText}>Cancel Booking</Text>
           )}
         </TouchableOpacity>
+        
         <TouchableOpacity
           style={styles.keepButton}
           onPress={() => navigation.goBack()}
           disabled={isSubmitting}
+          activeOpacity={0.7}
         >
-          <Text style={styles.keepButtonText}>KEEP BOOKING</Text>
+          <Text style={styles.keepButtonText}>Keep My Booking</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -214,182 +208,182 @@ export default function CancelBookingScreen({ navigation, route }: CancelBooking
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: BackgroundColors.primary,
+    backgroundColor: BACKGROUND,
+  },
+  scrollView: {
+    flex: 1,
   },
   content: {
-    flex: 1,
-    paddingTop: Spacing.xl,
-    paddingHorizontal: Spacing.xl,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: Spacing.xl,
+    marginBottom: 24,
   },
-  backArrow: {
-    color: TextColors.primary,
-    fontSize: Typography.fontSize.xl,
-    fontWeight: '300',
+  backButton: {
+    padding: 4,
+    marginLeft: -4,
   },
   headerTitle: {
     flex: 1,
-    color: TextColors.primary,
-    fontSize: Typography.fontSize.xl,
+    fontSize: 18,
     fontWeight: '600',
+    color: '#FFFFFF',
     textAlign: 'center',
   },
   headerSpacer: {
     width: 24,
   },
-  headline: {
-    color: TextColors.primary,
-    fontSize: Typography.fontSize.xl,
-    fontWeight: '600',
-    marginBottom: Spacing.xl,
-    textAlign: 'center',
+  warningBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: DANGER_MUTED,
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 20,
+    gap: 8,
   },
-  summaryCard: {
-    backgroundColor: BackgroundColors.cardBg,
+  warningBannerText: {
+    color: DANGER,
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  bookingCard: {
+    backgroundColor: CARD_BG,
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 28,
     borderWidth: 1,
-    borderColor: AccentColors.border,
-    borderRadius: BorderRadius.base,
-    padding: Spacing.xl,
-    marginBottom: Spacing.xl,
+    borderColor: 'rgba(255,255,255,0.08)',
   },
-  summaryVenueName: {
-    color: TextColors.primary,
-    fontSize: Typography.fontSize.lg,
+  venueName: {
+    fontSize: 20,
     fontWeight: '600',
-    marginBottom: Spacing.sm,
+    color: '#FFFFFF',
+    marginBottom: 16,
   },
-  summaryDate: {
-    color: TextColors.secondary,
-    fontSize: Typography.fontSize.base,
-    marginBottom: Spacing.xs / 2,
+  bookingDetails: {
+    gap: 10,
   },
-  summaryTime: {
-    color: TextColors.secondary,
-    fontSize: Typography.fontSize.base,
-    marginBottom: Spacing.xs / 2,
+  detailRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
   },
-  summaryGuests: {
-    color: TextColors.secondary,
-    fontSize: Typography.fontSize.base,
+  detailText: {
+    fontSize: 15,
+    color: 'rgba(255,255,255,0.7)',
   },
-  reasonsTitle: {
-    color: TextColors.primary,
-    fontSize: Typography.fontSize.base,
+  sectionTitle: {
+    fontSize: 15,
     fontWeight: '600',
-    marginBottom: Spacing.base,
+    color: '#FFFFFF',
+    marginBottom: 12,
   },
-  reasonsList: {
-    marginBottom: Spacing.xl,
+  reasonsContainer: {
+    gap: 8,
+    marginBottom: 24,
   },
   reasonOption: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: BackgroundColors.cardBg,
+    backgroundColor: CARD_BG,
+    borderRadius: 12,
+    padding: 16,
     borderWidth: 1,
-    borderColor: AccentColors.border,
-    borderRadius: BorderRadius.base,
-    padding: Spacing.base,
-    marginBottom: Spacing.sm,
+    borderColor: 'rgba(255,255,255,0.08)',
+    gap: 12,
   },
   reasonOptionSelected: {
-    borderColor: AccentColors.primary,
-    backgroundColor: 'rgba(86, 132, 196, 0.1)',
+    borderColor: ACCENT,
+    backgroundColor: 'rgba(86,132,196,0.08)',
+  },
+  radioOuter: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.3)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  radioOuterSelected: {
+    borderColor: ACCENT,
+  },
+  radioInner: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: ACCENT,
   },
   reasonText: {
-    color: TextColors.primary,
-    fontSize: Typography.fontSize.base,
-    fontWeight: '500',
+    fontSize: 15,
+    color: 'rgba(255,255,255,0.8)',
+    flex: 1,
   },
   reasonTextSelected: {
-    color: AccentColors.primary,
+    color: '#FFFFFF',
   },
-  errorContainer: {
-    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+  policyBox: {
+    backgroundColor: 'rgba(255,255,255,0.03)',
+    borderRadius: 12,
+    padding: 16,
     borderWidth: 1,
-    borderColor: '#EF4444',
-    borderRadius: BorderRadius.base,
-    padding: Spacing.base,
-    marginBottom: Spacing.xl,
+    borderColor: 'rgba(255,255,255,0.06)',
   },
-  errorText: {
-    color: '#EF4444',
-    fontSize: Typography.fontSize.sm,
-    textAlign: 'center',
-  },
-  warningBox: {
-    backgroundColor: 'rgba(239, 68, 68, 0.1)',
-    borderWidth: 1,
-    borderColor: 'rgba(239, 68, 68, 0.3)',
-    borderRadius: BorderRadius.base,
-    padding: Spacing.xl,
-    marginBottom: Spacing.xl * 2,
-    alignItems: 'center',
-  },
-  warningIcon: {
-    fontSize: 32,
-    marginBottom: Spacing.base,
-  },
-  warningTitle: {
-    color: '#EF4444',
-    fontSize: Typography.fontSize.base,
+  policyTitle: {
+    fontSize: 13,
     fontWeight: '600',
-    letterSpacing: 2,
-    marginBottom: Spacing.base,
+    color: 'rgba(255,255,255,0.5)',
+    marginBottom: 8,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
-  warningText: {
-    color: TextColors.secondary,
-    fontSize: Typography.fontSize.sm,
-    textAlign: 'center',
-    marginBottom: Spacing.base,
+  policyText: {
+    fontSize: 13,
+    color: 'rgba(255,255,255,0.5)',
     lineHeight: 20,
   },
-  warningDeposit: {
-    color: TextColors.primary,
-    fontSize: Typography.fontSize.base,
-    fontWeight: '500',
-  },
-  bottomButtonContainer: {
-    padding: Spacing.xl,
+  bottomContainer: {
+    padding: 20,
+    paddingTop: 16,
     borderTopWidth: 1,
-    borderTopColor: AccentColors.border,
-    backgroundColor: BackgroundColors.primary,
+    borderTopColor: 'rgba(255,255,255,0.06)',
+    backgroundColor: BACKGROUND,
+    gap: 12,
   },
   cancelButton: {
-    backgroundColor: '#EF4444',
-    borderRadius: BorderRadius.base,
-    padding: Spacing.base,
+    backgroundColor: DANGER,
+    borderRadius: 12,
+    padding: 16,
     alignItems: 'center',
-    minHeight: 52,
     justifyContent: 'center',
-    marginBottom: Spacing.base,
+    minHeight: 52,
   },
-  cancelButtonDisabled: {
-    opacity: 0.5,
+  buttonDisabled: {
+    opacity: 0.4,
   },
   cancelButtonText: {
-    color: TextColors.primary,
-    fontSize: Typography.fontSize.base,
+    color: '#FFFFFF',
+    fontSize: 16,
     fontWeight: '600',
-    letterSpacing: 1,
   },
   keepButton: {
+    backgroundColor: 'transparent',
     borderWidth: 1,
-    borderColor: AccentColors.border,
-    borderRadius: BorderRadius.base,
-    padding: Spacing.base,
+    borderColor: 'rgba(255,255,255,0.15)',
+    borderRadius: 12,
+    padding: 16,
     alignItems: 'center',
-    minHeight: 52,
     justifyContent: 'center',
+    minHeight: 52,
   },
   keepButtonText: {
-    color: TextColors.primary,
-    fontSize: Typography.fontSize.base,
+    color: '#FFFFFF',
+    fontSize: 16,
     fontWeight: '600',
-    letterSpacing: 1,
   },
 });
