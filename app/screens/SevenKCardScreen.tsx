@@ -333,9 +333,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   progressSection: {
-    backgroundColor: 'rgba(255,255,255,0.03)',
+    backgroundColor: 'rgba(255,255,255,0.05)',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.06)',
+    borderColor: 'rgba(255,255,255,0.1)',
     borderRadius: 12,
     padding: 20,
     marginBottom: 20,
@@ -381,7 +381,7 @@ const styles = StyleSheet.create({
     minHeight: 56,
     justifyContent: 'center',
     marginBottom: 10,
-    backgroundColor: 'rgba(255,255,255,0.03)',
+    backgroundColor: 'rgba(255,255,255,0.05)',
   },
   outlineButtonContent: {
     flexDirection: 'row',

@@ -6,6 +6,7 @@ import { Calendar } from 'lucide-react-native';
 import { BrandColors, BackgroundColors, TextColors, AccentColors, Spacing, Typography, BorderRadius } from '../../constants/brand';
 import BookingCard from '../../components/cards/BookingCard';
 import { getUserBookings } from '../../src/services/api';
+import { getVenueImage } from '../../src/utils/venueImages';
 import type { Booking } from '../../src/types/database';
 import type { Venue } from '../../src/types/database';
 
@@ -166,7 +167,7 @@ export default function BookingsScreen({ navigation }: BookingsScreenProps) {
           </View>
         ) : displayedBookings.length > 0 ? (
           displayedBookings.map((booking) => {
-            const venueImage = booking.venue?.photos?.[0] || null;
+            const venueImage = booking.venue?.photos?.[0] || getVenueImage(booking.venue?.name || '') || null;
             const displayStatus = mapStatusToDisplay(booking.status);
             
             return (

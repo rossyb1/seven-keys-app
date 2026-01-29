@@ -1,11 +1,12 @@
 import React, { useState, useCallback, useRef } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ImageBackground, TextInput, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ImageBackground, Alert, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Search, ChevronRight, Calendar, Users, Clock, Sparkles, ArrowRight } from 'lucide-react-native';
+import { ChevronRight, Calendar, Users, Clock, Sparkles, ArrowRight, Compass, LayoutGrid } from 'lucide-react-native';
 import { useAuth } from '../../src/contexts/AuthContext';
 import { getUserProfile, getUserBookings } from '../../src/services/api';
+import AnimatedPressable from '../../src/components/AnimatedPressable';
 import type { User, Booking } from '../../src/types/database';
 
 interface HomeScreenProps {
@@ -69,7 +70,6 @@ const categories: Category[] = [
 export default function HomeScreen({ navigation }: HomeScreenProps) {
   const { user: authUser } = useAuth();
   const scrollViewRef = useRef<ScrollView>(null);
-  const [searchQuery, setSearchQuery] = useState('');
   const [user, setUser] = useState<User | null>(null);
   const [upcomingBooking, setUpcomingBooking] = useState<Booking | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -224,6 +224,7 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
           <View style={styles.greetingContainer}>
             <Text style={styles.greeting}>{getGreeting()}</Text>
             {user && <Text style={styles.userName}>{getFirstName()}</Text>}
+            <Text style={styles.tagline}>Priority access to the best spots</Text>
           </View>
           {user && (user.points_balance || 0) > 0 ? (
             <TouchableOpacity 
@@ -331,36 +332,32 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
               onPress={scrollToCategories}
               activeOpacity={0.8}
             >
-              <Text style={styles.emptyBookingText}>No upcoming bookings</Text>
-              <Text style={styles.emptyBookingCta}>Explore below ↓</Text>
+              <View style={styles.emptyBookingIcon}>
+                <Compass size={24} color="#5684C4" strokeWidth={1.5} />
+              </View>
+              <Text style={styles.emptyBookingTitle}>Where to tonight?</Text>
+              <Text style={styles.emptyBookingText}>Skip the queues, get the best tables</Text>
             </TouchableOpacity>
           )}
         </View>
 
-        {/* Search Bar */}
-        <View style={styles.searchContainer}>
-          <View style={styles.searchBar}>
-            <Search size={20} color="rgba(255,255,255,0.4)" strokeWidth={1.5} />
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Search venues, experiences..."
-              placeholderTextColor="rgba(255,255,255,0.4)"
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              autoCapitalize="none"
-              autoCorrect={false}
-            />
+        {/* Section Header */}
+        <View style={styles.sectionHeader}>
+          <View style={styles.sectionHeaderIcon}>
+            <LayoutGrid size={14} color="#5684C4" strokeWidth={2} />
           </View>
+          <Text style={styles.sectionHeaderText}>EXPLORE</Text>
         </View>
 
         {/* Category Cards */}
         <View style={styles.categoriesContainer}>
           {categories.map((category) => (
-            <TouchableOpacity
+            <AnimatedPressable
               key={category.id}
               style={styles.categoryCard}
               onPress={() => handleCategoryPress(category)}
-              activeOpacity={0.9}
+              scaleValue={0.98}
+              hapticType="light"
             >
               <ImageBackground
                 source={category.image}
@@ -368,7 +365,7 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
                 resizeMode="cover"
               >
                 <LinearGradient
-                  colors={['rgba(10,22,40,0.88)', 'rgba(10,22,40,0.5)', 'rgba(10,22,40,0.15)']}
+                  colors={['rgba(10,22,40,0.75)', 'rgba(10,22,40,0.35)', 'rgba(10,22,40,0.1)']}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.categoryGradient}
@@ -378,11 +375,13 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
                       <Text style={styles.categoryName}>{category.name}</Text>
                       <Text style={styles.categorySubtitle}>{category.subtitle}</Text>
                     </View>
-                    <ChevronRight size={24} color="rgba(255,255,255,0.4)" strokeWidth={1.5} />
+                    <View style={styles.categoryArrow}>
+                      <ChevronRight size={22} color="rgba(255,255,255,0.6)" strokeWidth={2} />
+                    </View>
                   </View>
                 </LinearGradient>
               </ImageBackground>
-            </TouchableOpacity>
+            </AnimatedPressable>
           ))}
         </View>
       </ScrollView>
@@ -422,6 +421,11 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#FFFFFF',
   },
+  tagline: {
+    fontSize: 14,
+    color: 'rgba(255,255,255,0.4)',
+    marginTop: 4,
+  },
   pointsBadge: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -453,12 +457,17 @@ const styles = StyleSheet.create({
   },
   membershipCard: {
     flexDirection: 'row',
-    backgroundColor: 'rgba(255,255,255,0.03)',
+    backgroundColor: 'rgba(255,255,255,0.05)',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.08)',
-    borderRadius: 12,
+    borderColor: 'rgba(255,255,255,0.12)',
+    borderRadius: 14,
     marginBottom: 20,
     overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 5,
   },
   tierAccent: {
     width: 4,
@@ -520,10 +529,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: 'rgba(255,255,255,0.03)',
+    backgroundColor: 'rgba(255,255,255,0.05)',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.06)',
-    borderRadius: 12,
+    borderColor: 'rgba(255,255,255,0.1)',
+    borderRadius: 14,
     padding: 16,
     minHeight: 70,
   },
@@ -551,51 +560,71 @@ const styles = StyleSheet.create({
     color: 'rgba(255,255,255,0.6)',
   },
   emptyBookingCard: {
-    backgroundColor: 'rgba(255,255,255,0.02)',
+    backgroundColor: 'rgba(86,132,196,0.06)',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.08)',
-    borderRadius: 12,
-    padding: 20,
+    borderColor: 'rgba(86,132,196,0.2)',
+    borderRadius: 14,
+    padding: 24,
     alignItems: 'center',
+  },
+  emptyBookingIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: 'rgba(86,132,196,0.12)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  emptyBookingTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#FFFFFF',
+    marginBottom: 4,
   },
   emptyBookingText: {
     fontSize: 14,
     color: 'rgba(255,255,255,0.5)',
-    marginBottom: 4,
   },
   emptyBookingCta: {
     fontSize: 14,
     color: '#5684C4',
     fontWeight: '600',
   },
-  searchContainer: {
-    marginBottom: 20,
-  },
-  searchBar: {
+  sectionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.04)',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.08)',
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    gap: 12,
+    gap: 8,
+    marginBottom: 14,
   },
-  searchInput: {
-    flex: 1,
-    color: '#FFFFFF',
-    fontSize: 15,
+  sectionHeaderIcon: {
+    width: 24,
+    height: 24,
+    borderRadius: 6,
+    backgroundColor: 'rgba(86,132,196,0.12)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  sectionHeaderText: {
+    fontSize: 13,
+    fontWeight: '600',
+    letterSpacing: 1.2,
+    color: 'rgba(255,255,255,0.6)',
   },
   categoriesContainer: {
-    gap: 12,
+    gap: 14,
   },
   categoryCard: {
-    height: 100,
-    borderRadius: 12,
+    height: 120,
+    borderRadius: 16,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.06)',
+    borderColor: 'rgba(255,255,255,0.1)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
   },
   categoryImage: {
     width: '100%',
@@ -605,7 +634,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     justifyContent: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: 22,
   },
   categoryContent: {
     flexDirection: 'row',
@@ -617,13 +646,21 @@ const styles = StyleSheet.create({
   },
   categoryName: {
     color: '#FFFFFF',
-    fontSize: 15,
-    fontWeight: '600',
-    letterSpacing: 1.5,
-    marginBottom: 4,
+    fontSize: 16,
+    fontWeight: '700',
+    letterSpacing: 1.2,
+    marginBottom: 6,
   },
   categorySubtitle: {
-    color: 'rgba(255,255,255,0.6)',
-    fontSize: 13,
+    color: 'rgba(255,255,255,0.65)',
+    fontSize: 14,
+  },
+  categoryArrow: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

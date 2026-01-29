@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'rea
 import { LinearGradient } from 'expo-linear-gradient';
 import { BrandColors, BackgroundColors, TextColors, AccentColors, StatusColors, Spacing, Typography, BorderRadius } from '../../constants/brand';
 import { ChevronLeft, Calendar, Clock, Users, Armchair, FileText, CreditCard, MessageCircle, Camera, X } from '../../components/icons/AppIcons';
+import { getVenueImage } from '../../src/utils/venueImages';
 import type { Booking } from '../../src/types/database';
 import type { Venue } from '../../src/types/database';
 
@@ -25,7 +26,7 @@ export default function BookingDetailScreen({ navigation, route }: BookingDetail
   }
 
   const venue = booking.venue;
-  const venueImage = venue?.photos?.[0] || null;
+  const venueImage = venue?.photos?.[0] || getVenueImage(venue?.name || '') || null;
 
   // Helper function to format date nicely
   const formatDate = (dateString: string): string => {

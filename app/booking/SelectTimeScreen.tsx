@@ -154,9 +154,9 @@ const styles = StyleSheet.create({
   },
   timeSlot: {
     width: '31%',
-    backgroundColor: 'rgba(255,255,255,0.03)',
+    backgroundColor: 'rgba(255,255,255,0.05)',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.08)',
+    borderColor: 'rgba(255,255,255,0.12)',
     borderRadius: 10,
     padding: 14,
     alignItems: 'center',

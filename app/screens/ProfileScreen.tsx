@@ -215,6 +215,39 @@ export default function ProfileScreen({ navigation }: ProfileScreenProps) {
           </View>
         )}
 
+        {/* Invite Friends Section - Prominent placement */}
+        {referralCode && (
+          <View style={styles.inviteCardProminent}>
+            <View style={styles.inviteHeader}>
+              <View style={styles.inviteIconContainerLarge}>
+                <Gift size={22} color="#5684C4" strokeWidth={1.5} />
+              </View>
+              <View style={styles.inviteInfo}>
+                <Text style={styles.inviteTitleLarge}>Invite Friends, Earn Points</Text>
+                <Text style={styles.inviteSubtitle}>You both get 250 points per invite</Text>
+              </View>
+            </View>
+            <View style={styles.inviteCodeRowProminent}>
+              <Text style={styles.inviteCodeLabelProminent}>YOUR CODE</Text>
+              <TouchableOpacity style={styles.inviteCodeBadgeProminent} onPress={handleCopyCode}>
+                <Text style={styles.inviteCodeTextProminent}>{referralCode}</Text>
+                <Copy size={14} color="#5684C4" strokeWidth={2} />
+              </TouchableOpacity>
+            </View>
+            {referralCount > 0 && (
+              <View style={styles.inviteStatsRow}>
+                <Users size={14} color="rgba(255,255,255,0.7)" strokeWidth={1.5} />
+                <Text style={styles.inviteStatsTextProminent}>
+                  {referralCount} friend{referralCount !== 1 ? 's' : ''} invited • {(referralCount * 250).toLocaleString()} pts earned
+                </Text>
+              </View>
+            )}
+            <TouchableOpacity style={styles.shareButtonProminent} onPress={handleShareReferral}>
+              <Text style={styles.shareButtonTextProminent}>SHARE INVITE</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
         <View style={styles.divider} />
 
         {/* Account Section */}
@@ -235,19 +268,6 @@ export default function ProfileScreen({ navigation }: ProfileScreenProps) {
               <ChevronRight size={18} color="rgba(255,255,255,0.3)" strokeWidth={2} />
             </TouchableOpacity>
           ))}
-          {/* The 7K Card */}
-          <TouchableOpacity
-            style={styles.menuItem}
-            onPress={() => navigation.navigate('SevenKCard')}
-          >
-            <View style={styles.menuItemLeft}>
-              <View style={styles.menuIconContainer}>
-                <CreditCard size={18} color="#5684C4" strokeWidth={1.5} />
-              </View>
-              <Text style={styles.menuItemText}>The 7K Card</Text>
-            </View>
-            <ChevronRight size={18} color="rgba(255,255,255,0.3)" strokeWidth={2} />
-          </TouchableOpacity>
         </View>
 
         <View style={styles.divider} />
@@ -271,45 +291,6 @@ export default function ProfileScreen({ navigation }: ProfileScreenProps) {
             </TouchableOpacity>
           ))}
         </View>
-
-        <View style={styles.divider} />
-
-        {/* Invite Friends Section */}
-        {referralCode && (
-          <>
-            <Text style={styles.sectionHeader}>INVITE FRIENDS</Text>
-            <View style={styles.inviteCard}>
-              <View style={styles.inviteHeader}>
-                <View style={styles.inviteIconContainer}>
-                  <Gift size={20} color="#5684C4" strokeWidth={1.5} />
-                </View>
-                <View style={styles.inviteInfo}>
-                  <Text style={styles.inviteTitle}>Earn 250 points each</Text>
-                  <Text style={styles.inviteSubtitle}>Share your code with friends</Text>
-                </View>
-              </View>
-              <View style={styles.inviteCodeRow}>
-                <Text style={styles.inviteCodeLabel}>Your code</Text>
-                <TouchableOpacity style={styles.inviteCodeBadge} onPress={handleCopyCode}>
-                  <Text style={styles.inviteCodeText}>{referralCode}</Text>
-                  <Copy size={14} color="#5684C4" strokeWidth={2} />
-                </TouchableOpacity>
-              </View>
-              {referralCount > 0 && (
-                <View style={styles.inviteStatsRow}>
-                  <Users size={14} color="rgba(255,255,255,0.5)" strokeWidth={1.5} />
-                  <Text style={styles.inviteStatsText}>
-                    {referralCount} friend{referralCount !== 1 ? 's' : ''} invited • {(referralCount * 250).toLocaleString()} pts earned
-                  </Text>
-                </View>
-              )}
-              <TouchableOpacity style={styles.shareButton} onPress={handleShareReferral}>
-                <Text style={styles.shareButtonText}>SHARE INVITE</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.divider} />
-          </>
-        )}
 
         {/* Support Section */}
         <Text style={styles.sectionHeader}>SUPPORT</Text>
@@ -373,10 +354,10 @@ const styles = StyleSheet.create({
   },
   statsRow: {
     flexDirection: 'row',
-    backgroundColor: 'rgba(255,255,255,0.03)',
+    backgroundColor: 'rgba(255,255,255,0.05)',
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.08)',
+    borderColor: 'rgba(255,255,255,0.12)',
     marginBottom: Spacing.xl,
     overflow: 'hidden',
   },
@@ -434,9 +415,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.03)',
+    backgroundColor: 'rgba(255,255,255,0.05)',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.06)',
+    borderColor: 'rgba(255,255,255,0.1)',
     borderRadius: 12,
     padding: Spacing.base,
     minHeight: 56,
@@ -461,7 +442,7 @@ const styles = StyleSheet.create({
     marginLeft: 14,
   },
   inviteCard: {
-    backgroundColor: 'rgba(255,255,255,0.03)',
+    backgroundColor: 'rgba(255,255,255,0.05)',
     borderWidth: 1,
     borderColor: 'rgba(86,132,196,0.15)',
     borderRadius: 12,
@@ -554,10 +535,10 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     marginTop: 8,
     marginBottom: 12,
-    backgroundColor: 'rgba(255,255,255,0.03)',
+    backgroundColor: 'rgba(255,255,255,0.05)',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.06)',
+    borderColor: 'rgba(255,255,255,0.1)',
   },
   logOutText: {
     color: 'rgba(255,255,255,0.7)',
@@ -576,5 +557,71 @@ const styles = StyleSheet.create({
     color: 'rgba(255,255,255,0.35)',
     fontSize: 13,
     marginLeft: 8,
+  },
+  // Prominent Invite Card Styles (subtle version)
+  inviteCardProminent: {
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    borderWidth: 1,
+    borderColor: 'rgba(86,132,196,0.25)',
+    borderRadius: 14,
+    padding: 16,
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  inviteIconContainerLarge: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    backgroundColor: 'rgba(86,132,196,0.15)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  inviteTitleLarge: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 2,
+  },
+  inviteCodeRowProminent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: 'rgba(255,255,255,0.04)',
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 12,
+  },
+  inviteCodeLabelProminent: {
+    color: 'rgba(255,255,255,0.4)',
+    fontSize: 10,
+    fontWeight: '600',
+    letterSpacing: 1.5,
+  },
+  inviteCodeBadgeProminent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  inviteCodeTextProminent: {
+    color: '#5684C4',
+    fontSize: 16,
+    fontWeight: '700',
+    letterSpacing: 2,
+  },
+  inviteStatsTextProminent: {
+    color: 'rgba(255,255,255,0.5)',
+    fontSize: 13,
+  },
+  shareButtonProminent: {
+    backgroundColor: '#5684C4',
+    borderRadius: 10,
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+  shareButtonTextProminent: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
+    letterSpacing: 0.5,
   },
 });

@@ -54,6 +54,14 @@ export const venueGallery: Record<string, any[]> = {
     require('../../Images/gigi-gallery-2.jpg'),
     require('../../Images/gigi-gallery-3.jpg'),
     require('../../Images/gigi-gallery-4.jpg'),
+    require('../../Images/gigi-gallery-5.jpg'),
+  ],
+  'Hakkasan': [
+    require('../../Images/hakkasan-gallery-1.jpg'),
+    require('../../Images/hakkasan-gallery-2.jpg'),
+    require('../../Images/hakkasan-gallery-3.jpg'),
+    require('../../Images/hakkasan-gallery-4.jpg'),
+    require('../../Images/hakkasan-gallery-5.jpg'),
   ],
   'Carbone': [
     require('../../Images/carbone-gallery-1.jpg'),

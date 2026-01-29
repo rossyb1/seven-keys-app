@@ -355,9 +355,9 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   messageContainer: {
-    backgroundColor: 'rgba(255,255,255,0.03)',
+    backgroundColor: 'rgba(255,255,255,0.05)',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.08)',
+    borderColor: 'rgba(255,255,255,0.12)',
     borderRadius: 12,
     padding: 14,
     marginBottom: 16,
@@ -376,9 +376,9 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   input: {
-    backgroundColor: 'rgba(255,255,255,0.03)',
+    backgroundColor: 'rgba(255,255,255,0.05)',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.08)',
+    borderColor: 'rgba(255,255,255,0.12)',
     borderRadius: 12,
     padding: 16,
     color: '#FFFFFF',

@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BrandColors, BackgroundColors, TextColors, AccentColors, Spacing, Typography, BorderRadius } from '../../constants/brand';
 import { ChevronLeft, Calendar, Clock, Users, Armchair, FileText, CreditCard, Camera } from '../../components/icons/AppIcons';
 import PrimaryButton from '../../components/buttons/PrimaryButton';
 import { createBooking } from '../../src/services/api';
+import { getVenueImage } from '../../src/utils/venueImages';
 import type { Venue } from '../../src/types/database';
 
 interface ReviewBookingScreenProps {
@@ -133,12 +134,20 @@ export default function ReviewBookingScreen({ navigation, route }: ReviewBooking
 
         {/* Venue Image */}
         <View style={styles.venueImageContainer}>
-          <LinearGradient
-            colors={[BackgroundColors.secondary, BackgroundColors.cardBg]}
-            style={styles.venueImage}
-          >
-            <Camera size={24} color={TextColors.tertiary} strokeWidth={1.5} />
-          </LinearGradient>
+          {venue && getVenueImage(venue.name) ? (
+            <Image
+              source={getVenueImage(venue.name)}
+              style={styles.venueImage}
+              resizeMode="cover"
+            />
+          ) : (
+            <LinearGradient
+              colors={[BackgroundColors.secondary, BackgroundColors.cardBg]}
+              style={[styles.venueImage, styles.venueImagePlaceholder]}
+            >
+              <Camera size={24} color={TextColors.tertiary} strokeWidth={1.5} />
+            </LinearGradient>
+          )}
         </View>
 
         {/* Venue Info */}
@@ -247,6 +256,8 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 100,
     borderRadius: 12,
+  },
+  venueImagePlaceholder: {
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -286,10 +297,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 32,
     paddingVertical: 24,
-    backgroundColor: 'rgba(255,255,255,0.03)',
+    backgroundColor: 'rgba(255,255,255,0.05)',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.06)',
+    borderColor: 'rgba(255,255,255,0.1)',
   },
   depositLabel: {
     color: 'rgba(255,255,255,0.4)',
