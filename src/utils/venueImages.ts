@@ -14,7 +14,6 @@ const venueImages: Record<string, any> = {
   'Verde Dubai': require('../../Images/verde-dubai.png'),
   'Gal': require('../../Images/gal.png'),
   'Urla': require('../../Images/urla.png'),
-  'Hobu': require('../../Images/nobu.png'), // using nobu.png as placeholder since hobu.png doesn't exist
   'Bebeach': require('../../Images/bebeach-1.webp'),
   'Gigi Rigolatto': require('../../Images/Gigi-Rigolatto.png'),
 };
