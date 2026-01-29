@@ -199,8 +199,29 @@ export default function ReservationFormScreen({ navigation, route }: Reservation
           {/* Group Size */}
           <View style={styles.field}>
             <Text style={styles.label}>Group Size *</Text>
-            <View style={styles.groupSizeGrid}>
-              {[1, 2, 3, 4, 5, 6, 7, 8].map((size) => (
+            <View style={styles.groupSizeRow}>
+              {[1, 2, 3, 4, 5].map((size) => (
+                <TouchableOpacity
+                  key={size}
+                  style={[
+                    styles.groupSizeButton,
+                    groupSize === size && styles.groupSizeButtonSelected,
+                  ]}
+                  onPress={() => setGroupSize(size)}
+                >
+                  <Text
+                    style={[
+                      styles.groupSizeText,
+                      groupSize === size && styles.groupSizeTextSelected,
+                    ]}
+                  >
+                    {size}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+            <View style={[styles.groupSizeRow, { marginTop: 8 }]}>
+              {[6, 7, 8, 9].map((size) => (
                 <TouchableOpacity
                   key={size}
                   style={[
@@ -222,17 +243,17 @@ export default function ReservationFormScreen({ navigation, route }: Reservation
               <TouchableOpacity
                 style={[
                   styles.groupSizeButton,
-                  groupSize && groupSize >= 9 && styles.groupSizeButtonSelected,
+                  groupSize && groupSize >= 10 && styles.groupSizeButtonSelected,
                 ]}
-                onPress={() => setGroupSize(9)}
+                onPress={() => setGroupSize(10)}
               >
                 <Text
                   style={[
                     styles.groupSizeText,
-                    groupSize && groupSize >= 9 && styles.groupSizeTextSelected,
+                    groupSize && groupSize >= 10 && styles.groupSizeTextSelected,
                   ]}
                 >
-                  9+
+                  10+
                 </Text>
               </TouchableOpacity>
             </View>
@@ -484,13 +505,12 @@ const styles = StyleSheet.create({
     height: 100,
     paddingTop: 16,
   },
-  groupSizeGrid: {
+  groupSizeRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     gap: 8,
   },
   groupSizeButton: {
-    width: '18%',
+    flex: 1,
     aspectRatio: 1,
     backgroundColor: INPUT_BG,
     borderRadius: BORDER_RADIUS,
