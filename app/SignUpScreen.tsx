@@ -142,6 +142,8 @@ export default function SignUpScreen({ navigation, route }: SignUpScreenProps) {
       // Combine country code with phone number
       const fullPhone = `${selectedCountry.dialCode}${phoneNumber.trim()}`;
       
+      console.log('📱 Starting signup for:', email.trim());
+      
       // Call createUser - this handles supabase.auth.signUp() and inserting into users table
       const result = await createUser({
         email: email.trim(),
@@ -149,6 +151,8 @@ export default function SignUpScreen({ navigation, route }: SignUpScreenProps) {
         phone: fullPhone,
         invite_code: inviteCode,
       });
+
+      console.log('📥 createUser result:', result.user ? 'SUCCESS' : 'FAILED', result.error);
 
       if (result.error) {
         // Show user-friendly error message
@@ -163,14 +167,23 @@ export default function SignUpScreen({ navigation, route }: SignUpScreenProps) {
         setError(errorMessage);
         setIsSubmitting(false);
       } else if (result.user) {
-        // User created successfully - navigate immediately
-        // Auth context will update automatically via onAuthStateChange
-        navigation.navigate('CitySelection');
+        // User created successfully!
+        // Auth context will detect the new user via onAuthStateChange
+        // and automatically switch to OnboardingStack (CitySelection)
+        console.log('✅ Account created, waiting for auth context to switch to onboarding...');
+        
+        // Safety timeout: if auth context hasn't switched after 5s, reset loading state
+        // This prevents infinite spinner if something goes wrong
+        setTimeout(() => {
+          setIsSubmitting(false);
+          console.log('⏱️ Timeout: resetting submitting state');
+        }, 5000);
       } else {
         setError('Failed to create account. Please try again.');
         setIsSubmitting(false);
       }
     } catch (err: any) {
+      console.error('❌ Signup exception:', err);
       setError(err.message || 'Failed to create account. Please try again.');
       setIsSubmitting(false);
     }

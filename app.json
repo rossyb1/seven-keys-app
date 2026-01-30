@@ -2,6 +2,7 @@
   "expo": {
     "name": "Seven-keys-app",
     "slug": "seven-keys",
+    "scheme": "sevenkeys",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -13,7 +14,13 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.sevenkeys.app",
+      "config": {
+        "googleSignIn": {
+          "reservedClientId": "com.googleusercontent.apps.154253170475-55dooqkhtqgv5adrerd9gm9v2a48q9s2"
+        }
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -49,7 +56,8 @@
             "./fonts/BrittiSansTrial-Bold-BF6757bfd4a96ed.otf"
           ]
         }
-      ]
+      ],
+      "expo-web-browser"
     ]
   }
 }

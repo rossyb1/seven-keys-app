@@ -6,8 +6,10 @@ interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
+  needsOnboarding: boolean;
   signOut: () => Promise<void>;
   refreshUser: () => Promise<boolean>;
+  setUserDirect: (user: User) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -22,24 +24,38 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // Fetch user profile from users table
   const fetchUserProfile = async (userId: string): Promise<User | null> => {
+    console.log('🔍 [fetchUserProfile] Starting fetch for:', userId);
     try {
-      const { data, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', userId)
-        .single();
+      // Add timeout to prevent hanging
+      const timeoutPromise = new Promise<null>((resolve) => {
+        setTimeout(() => {
+          console.log('⚠️ [fetchUserProfile] Timeout after 5s');
+          resolve(null);
+        }, 5000);
+      });
 
-      if (error) {
-        // If user profile doesn't exist yet (mid-signup), return null
-        if (error.code === 'PGRST116') {
-          console.log('User profile not found yet - user may be mid-signup');
+      const fetchPromise = (async () => {
+        const { data, error } = await supabase
+          .from('users')
+          .select('*')
+          .eq('id', userId)
+          .single();
+
+        console.log('🔍 [fetchUserProfile] Query complete:', data?.id || 'no data', error?.code || 'no error');
+
+        if (error) {
+          if (error.code === 'PGRST116') {
+            console.log('User profile not found yet - user may be mid-signup');
+            return null;
+          }
+          console.error('Error fetching user profile:', error);
           return null;
         }
-        console.error('Error fetching user profile:', error);
-        return null;
-      }
 
-      return data as User;
+        return data as User;
+      })();
+
+      return await Promise.race([fetchPromise, timeoutPromise]);
     } catch (error) {
       console.error('Error fetching user profile:', error);
       return null;
@@ -126,12 +142,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
           if (session?.user) {
             // User signed in or session refreshed
             console.log('👤 Fetching user profile for:', session.user.id);
+            
+            // For SIGNED_IN events (new signups), wait a bit for profile to be created
+            if (event === 'SIGNED_IN') {
+              console.log('⏳ [AuthContext] Waiting 2s for profile...');
+              await new Promise(resolve => setTimeout(resolve, 2000));
+              console.log('⏳ [AuthContext] Wait complete, fetching profile...');
+            }
+            
             const userProfile = await fetchUserProfile(session.user.id);
-            console.log('📋 User profile result:', userProfile ? 'Found' : 'Not found');
+            console.log('📋 [AuthContext] Profile:', userProfile ? `found (cities=${userProfile.preferred_cities})` : 'NOT FOUND');
             
             if (isMounted) {
               setUser(userProfile);
-              console.log('✅ User state updated in context');
+              console.log('✅ [AuthContext] User set, isAuth=', !!userProfile, 'needsOnboarding=', userProfile && !userProfile.preferred_cities);
             }
           } else {
             // User signed out
@@ -197,12 +221,26 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
+  // Check if user needs to complete onboarding (no preferred_cities set)
+  const hasCompletedOnboarding = user?.preferred_cities && 
+    (typeof user.preferred_cities === 'string' 
+      ? JSON.parse(user.preferred_cities).length > 0 
+      : Array.isArray(user.preferred_cities) && user.preferred_cities.length > 0);
+
+  // Direct setter for user - bypasses all the async stuff
+  const setUserDirect = (newUser: User) => {
+    console.log('🔄 [AuthContext] setUserDirect called with:', newUser?.id);
+    setUser(newUser);
+  };
+
   const value: AuthContextType = {
     user,
     isLoading,
-    isAuthenticated: !!user,
+    isAuthenticated: !!user && hasCompletedOnboarding,
+    needsOnboarding: !!user && !hasCompletedOnboarding,
     signOut,
     refreshUser,
+    setUserDirect,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

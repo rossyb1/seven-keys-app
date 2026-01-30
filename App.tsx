@@ -7,6 +7,8 @@ import { useAppFonts } from './hooks/useAppFonts';
 import { AuthProvider, useAuth } from './src/contexts/AuthContext';
 import SplashScreen from './app/SplashScreen';
 import InviteCodeScreen from './app/InviteCodeScreen';
+import AuthMethodScreen from './app/AuthMethodScreen';
+import CompleteProfileScreen from './app/CompleteProfileScreen';
 import SignUpScreen from './app/SignUpScreen';
 import CitySelectionScreen from './app/CitySelectionScreen';
 import AgeGroupScreen from './app/AgeGroupScreen';
@@ -68,10 +70,9 @@ function AuthStack() {
     >
       <Stack.Screen name="Splash" component={SplashScreen} />
       <Stack.Screen name="InviteCode" component={InviteCodeScreen} />
+      <Stack.Screen name="AuthMethod" component={AuthMethodScreen} />
+      <Stack.Screen name="CompleteProfile" component={CompleteProfileScreen} />
       <Stack.Screen name="SignUp" component={SignUpScreen} />
-      <Stack.Screen name="CitySelection" component={CitySelectionScreen} />
-      <Stack.Screen name="AgeGroup" component={AgeGroupScreen} />
-      <Stack.Screen name="Permissions" component={PermissionsScreen} />
     </Stack.Navigator>
   );
 }
@@ -133,12 +134,41 @@ function AppStack() {
   );
 }
 
+// Onboarding Stack - for authenticated users who haven't completed onboarding
+function OnboardingStack() {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+        contentStyle: {
+          backgroundColor: BackgroundColors.primary,
+        },
+      }}
+      initialRouteName="CitySelection"
+    >
+      <Stack.Screen name="CitySelection" component={CitySelectionScreen} />
+      <Stack.Screen name="AgeGroup" component={AgeGroupScreen} />
+      <Stack.Screen name="Permissions" component={PermissionsScreen} />
+    </Stack.Navigator>
+  );
+}
+
 // Root Navigator - conditionally renders based on auth status
 function RootNavigator() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, needsOnboarding, user } = useAuth();
+
+  // Log every render to debug
+  console.log('🧭 [RootNavigator] Render:', { 
+    isLoading, 
+    isAuthenticated, 
+    needsOnboarding, 
+    hasUser: !!user,
+    userId: user?.id 
+  });
 
   // Show loading while checking auth status
   if (isLoading) {
+    console.log('🧭 [RootNavigator] → Showing LOADING');
     return (
       <View style={{ flex: 1, backgroundColor: BackgroundColors.primary, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator color={AccentColors.primary} size="large" />
@@ -146,8 +176,19 @@ function RootNavigator() {
     );
   }
 
-  // Show appropriate stack based on authentication
-  return isAuthenticated ? <AppStack /> : <AuthStack />;
+  // Show appropriate stack based on authentication and onboarding status
+  if (needsOnboarding) {
+    console.log('🧭 [RootNavigator] → Showing ONBOARDING');
+    return <OnboardingStack />;
+  }
+  
+  if (isAuthenticated) {
+    console.log('🧭 [RootNavigator] → Showing APP');
+    return <AppStack />;
+  }
+  
+  console.log('🧭 [RootNavigator] → Showing AUTH');
+  return <AuthStack />;
 }
 
 export default function App() {

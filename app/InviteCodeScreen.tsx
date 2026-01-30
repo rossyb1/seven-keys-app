@@ -44,8 +44,8 @@ export default function InviteCodeScreen({ navigation }: InviteCodeScreenProps) 
       clearTimeout(timeoutId);
 
       if (result.valid) {
-        // Navigate to SignUp with invite code as param
-        navigation.navigate('SignUp', { inviteCode: inviteCode.trim().toUpperCase() });
+        // Navigate to AuthMethod with invite code as param
+        navigation.navigate('AuthMethod', { inviteCode: inviteCode.trim().toUpperCase() });
       } else {
         setError(result.error || 'Invalid or already used invite code');
       }
