@@ -13,11 +13,19 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ChevronLeft } from '../components/icons/AppIcons';
 import { supabase } from '../src/lib/supabase';
 import * as WebBrowser from 'expo-web-browser';
+import * as AuthSession from 'expo-auth-session';
 import Svg, { Path } from 'react-native-svg';
 import { BackgroundColors, AccentColors, TextColors, Typography, BorderRadius } from '../constants/brand';
 import { useAuth } from '../src/contexts/AuthContext';
 
 WebBrowser.maybeCompleteAuthSession();
+
+// This generates the correct redirect URL for both Expo Go AND standalone builds
+const redirectUrl = AuthSession.makeRedirectUri({
+  scheme: 'sevenkeys',
+  path: 'auth/callback',
+});
+console.log('🔗 OAuth redirect URL:', redirectUrl);
 
 interface AuthMethodScreenProps {
   navigation: any;
@@ -52,7 +60,6 @@ export default function AuthMethodScreen({ navigation, route }: AuthMethodScreen
     console.log('🚀 Google sign in started');
     setIsLoading('google');
     try {
-      const redirectUrl = 'sevenkeys://auth/callback';
       console.log('📤 Opening OAuth with redirect:', redirectUrl);
       
       const { data, error } = await supabase.auth.signInWithOAuth({
@@ -184,7 +191,6 @@ export default function AuthMethodScreen({ navigation, route }: AuthMethodScreen
   const handleAppleSignIn = async () => {
     setIsLoading('apple');
     try {
-      const redirectUrl = 'sevenkeys://auth/callback';
       
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'apple',
