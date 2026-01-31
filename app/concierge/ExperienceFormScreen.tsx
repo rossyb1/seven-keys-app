@@ -13,7 +13,7 @@ import {
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ChevronLeft, ChevronDown } from 'lucide-react-native';
 import { useAuth } from '../../src/contexts/AuthContext';
-import { getVenues } from '../../src/services/api';
+import { getVenues, createSpecialBookingRequest } from '../../src/services/api';
 import type { Venue } from '../../src/types/database';
 import PrimaryButton from '../../components/buttons/PrimaryButton';
 
@@ -100,23 +100,27 @@ export default function ExperienceFormScreen({ navigation, route }: ExperienceFo
 
     setIsSubmitting(true);
     try {
-      // For now, we'll save to a requests table or escalate
-      // This will be handled by the API function
-      const requestData = {
-        type: 'experience',
-        experience_type: experienceType,
-        venue_id: selectedVenue?.id || null,
-        date: formatDateForAPI(selectedDate),
-        group_size: parseInt(groupSize),
-        lead_name: leadName,
-        email,
-        phone,
-        preferences: preferences || null,
-        escalated: ['Yacht', 'Nightclub', 'Event Tickets'].includes(experienceType),
-      };
+      const result = await createSpecialBookingRequest({
+        user_id: '',
+        request_type: 'experience',
+        venue_id: selectedVenue?.id || undefined,
+        venue_name: selectedVenue?.name || undefined,
+        event_date: selectedDate?.toISOString(),
+        guest_count: parseInt(groupSize),
+        details: {
+          experience_type: experienceType,
+          lead_name: leadName,
+          email: email,
+          phone: phone,
+          preferences: preferences,
+          escalated: ['Yacht', 'Nightclub', 'Event Tickets'].includes(experienceType),
+        },
+      });
 
-      // TODO: Create API function for experience requests
-      // For now, show success and navigate back
+      if (!result.success) {
+        throw new Error(result.error);
+      }
+
       Alert.alert(
         'Request Submitted',
         experienceType === 'Beach Club'
