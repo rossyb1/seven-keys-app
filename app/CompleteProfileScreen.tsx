@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { supabase } from '../src/lib/supabase';
+import { useAuth } from '../src/contexts/AuthContext';
 import PrimaryButton from '../components/buttons/PrimaryButton';
 import CountryCodePickerModal, { COUNTRIES, Country } from '../components/modals/CountryCodePickerModal';
 import { ChevronRight } from '../components/icons/AppIcons';
@@ -27,6 +28,7 @@ const ACCENT = '#5684C4';
 export default function CompleteProfileScreen({ navigation, route }: CompleteProfileScreenProps) {
   const insets = useSafeAreaInsets();
   const { inviteCode, userId } = route.params || {};
+  const { refreshUser } = useAuth();
   
   const [userName, setUserName] = useState('');
   const [selectedCountry, setSelectedCountry] = useState<Country>(COUNTRIES[0]); // UAE default
@@ -129,9 +131,10 @@ export default function CompleteProfileScreen({ navigation, route }: CompletePro
         console.log('✅ Profile created!');
       }
 
-      console.log('✅ Profile saved, navigating to city selection...');
-      // Navigate to city selection
-      navigation.replace('CitySelection');
+      console.log('✅ Profile saved, refreshing auth context...');
+      // Refresh auth context - it will detect needsOnboarding and show OnboardingStack
+      await refreshUser();
+      console.log('✅ Auth context refreshed, should navigate automatically');
       
     } catch (err: any) {
       console.error('❌ Complete profile error:', err);
