@@ -12,7 +12,7 @@ import {
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ChevronLeft, ChevronDown } from 'lucide-react-native';
 import { useAuth } from '../../src/contexts/AuthContext';
-import { getVenues } from '../../src/services/api';
+import { getVenues, createSpecialBookingRequest } from '../../src/services/api';
 import type { Venue } from '../../src/types/database';
 import PrimaryButton from '../../components/buttons/PrimaryButton';
 
@@ -98,8 +98,29 @@ export default function GroupBookingFormScreen({ navigation }: GroupBookingFormS
 
     setIsSubmitting(true);
     try {
-      // TODO: Create API function for group bookings
-      // All group bookings escalate to human
+      const result = await createSpecialBookingRequest({
+        user_id: '', // Will be set by the API function
+        request_type: 'group',
+        venue_id: selectedVenue?.id,
+        venue_name: selectedVenue?.name,
+        event_date: selectedDate?.toISOString(),
+        event_time: selectedTime || undefined,
+        guest_count: parseInt(groupSize),
+        budget: budget || undefined,
+        details: {
+          occasion: occasion,
+          lead_name: leadName,
+          email: email,
+          phone: phone,
+          need_recommendations: needRecommendations,
+          special_requests: specialRequests,
+        },
+      });
+
+      if (!result.success) {
+        throw new Error(result.error);
+      }
+
       Alert.alert(
         'Request Submitted',
         'Your group booking request has been submitted. Our team will coordinate with the venue and get back to you shortly.',
