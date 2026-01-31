@@ -16,8 +16,6 @@ export default function PersonalDetailsScreen({ navigation }: PersonalDetailsScr
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  const [nationality, setNationality] = useState('British');
-  const [ageGroup, setAgeGroup] = useState('26-35');
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -212,29 +210,6 @@ export default function PersonalDetailsScreen({ navigation }: PersonalDetailsScr
             keyboardType="phone-pad"
           />
 
-          <TouchableOpacity
-            style={[
-              styles.input,
-              styles.dropdownInput,
-              focusedField === 'nationality' && styles.inputFocused,
-            ]}
-            onPress={() => setFocusedField('nationality')}
-          >
-            <Text style={styles.dropdownText}>{nationality}</Text>
-            <Text style={styles.dropdownArrow}>▼</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[
-              styles.input,
-              styles.dropdownInput,
-              focusedField === 'ageGroup' && styles.inputFocused,
-            ]}
-            onPress={() => setFocusedField('ageGroup')}
-          >
-            <Text style={styles.dropdownText}>{ageGroup}</Text>
-            <Text style={styles.dropdownArrow}>▼</Text>
-          </TouchableOpacity>
         </View>
 
         {/* Error Message */}
@@ -390,19 +365,6 @@ const styles = StyleSheet.create({
     borderColor: '#5684C4',
     borderWidth: 1.5,
     backgroundColor: 'rgba(86,132,196,0.05)',
-  },
-  dropdownInput: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  dropdownText: {
-    color: '#FFFFFF',
-    fontSize: 15,
-  },
-  dropdownArrow: {
-    color: 'rgba(255,255,255,0.4)',
-    fontSize: 10,
   },
   bottomButtonContainer: {
     padding: Spacing.xl,
