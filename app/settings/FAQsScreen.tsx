@@ -31,7 +31,7 @@ const FAQ_ITEMS = [
   },
   {
     question: 'How do I contact support?',
-    answer: 'You can message our concierge team directly through the app, or contact us via WhatsApp at +971 50 XXX XXXX. Our team is available to assist with any requests or questions.',
+    answer: 'You can message our concierge team directly through the app. Our team is available to assist with any requests or questions.',
   },
 ];
 

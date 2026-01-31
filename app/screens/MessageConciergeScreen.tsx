@@ -65,16 +65,6 @@ export default function MessageConciergeScreen({ navigation }: MessageConciergeS
           style={{ width: '100%' }}
         />
 
-        <View style={styles.divider} />
-
-        {/* Direct Contact */}
-        <Text style={styles.contactLabel}>Or contact us directly:</Text>
-        <TouchableOpacity style={styles.phoneButton} onPress={handlePhonePress}>
-          <View style={styles.phoneButtonContent}>
-            <Phone size={20} color={AccentColors.primary} strokeWidth={1.5} />
-            <Text style={[styles.phoneNumber, { marginLeft: Spacing.sm }]}>+971 50 XXX XXXX</Text>
-          </View>
-        </TouchableOpacity>
       </ScrollView>
     </View>
   );
