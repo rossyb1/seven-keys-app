@@ -1270,3 +1270,79 @@ export async function getUserReferralInfo(): Promise<{
     return { referralCode: null, referralCount: 0, totalPointsEarned: 0, error: error.message };
   }
 }
+
+// ============================================================================
+// Special Booking Request Functions
+// ============================================================================
+
+export interface SpecialBookingRequest {
+  id?: string;
+  user_id: string;
+  request_type: 'group' | 'corporate' | 'experience';
+  venue_id?: string;
+  venue_name?: string;
+  event_date?: string;
+  event_time?: string;
+  guest_count?: number;
+  budget?: string;
+  details: Record<string, any>;
+  status: 'pending' | 'contacted' | 'confirmed' | 'cancelled';
+  created_at?: string;
+}
+
+export async function createSpecialBookingRequest(
+  request: Omit<SpecialBookingRequest, 'id' | 'created_at' | 'status'>
+): Promise<{ success: boolean; requestId?: string; error?: string }> {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return { success: false, error: 'You must be logged in to submit a request' };
+    }
+
+    const { data, error } = await supabase
+      .from('special_booking_requests')
+      .insert({
+        ...request,
+        user_id: user.id,
+        status: 'pending',
+      })
+      .select('id')
+      .single();
+
+    if (error) {
+      console.error('Error creating special booking request:', error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, requestId: data.id };
+  } catch (error: any) {
+    console.error('createSpecialBookingRequest error:', error);
+    return { success: false, error: error.message || 'Failed to submit request' };
+  }
+}
+
+export async function getSpecialBookingRequests(): Promise<{
+  requests: SpecialBookingRequest[];
+  error?: string;
+}> {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return { requests: [], error: 'You must be logged in' };
+    }
+
+    const { data, error } = await supabase
+      .from('special_booking_requests')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      return { requests: [], error: error.message };
+    }
+
+    return { requests: data || [] };
+  } catch (error: any) {
+    return { requests: [], error: error.message };
+  }
+}
