@@ -163,7 +163,7 @@ async function completePartialSignup(
         phone: userData.phone,
         tier: 'blue',
         points_balance: 0,
-        preferred_cities: JSON.stringify([]),
+        preferred_cities: [],
         invite_code_used: userData.invite_code.toUpperCase(),
       })
       .select()
@@ -355,7 +355,7 @@ export async function createUser(userData: {
             phone: userData.phone,
             tier: 'blue',
             points_balance: 100,
-            preferred_cities: JSON.stringify([]),
+            preferred_cities: [],
             invite_code_used: userData.invite_code.toUpperCase(),
             referral_code: referralCode,
           };

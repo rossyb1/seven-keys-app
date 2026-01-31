@@ -52,7 +52,7 @@ export default function CitySelectionScreen({ navigation }: CitySelectionScreenP
       if (authUser) {
         const { error } = await supabase
           .from('users')
-          .update({ preferred_cities: JSON.stringify(selectedCities) })
+          .update({ preferred_cities: selectedCities })
           .eq('id', authUser.id);
         
         if (error) {
