@@ -34,21 +34,21 @@ const categories: Category[] = [
     id: 'restaurants', 
     name: 'RESTAURANTS & BARS', 
     image: require('../../Images/restaurants-category.jpg'), 
-    subtitle: '17 venues', 
+    subtitle: 'Dubai', 
     enabled: true 
   },
   { 
     id: 'beach_clubs', 
     name: 'BEACH CLUBS', 
     image: require('../../Images/beachclub-category.jpg'), 
-    subtitle: '8 venues', 
+    subtitle: 'Dubai', 
     enabled: true 
   },
   { 
     id: 'events', 
     name: 'EVENTS', 
     image: require('../../Images/events-category.jpg'), 
-    subtitle: 'Worldwide', 
+    subtitle: 'Coming soon', 
     enabled: false 
   },
   { 
