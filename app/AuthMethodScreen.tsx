@@ -25,7 +25,13 @@ const redirectUrl = AuthSession.makeRedirectUri({
   scheme: 'sevenkeys',
   path: 'auth/callback',
 });
+
+// CRITICAL: Log this - you must add this EXACT URL to Supabase Dashboard
+console.log('═══════════════════════════════════════════════════════');
 console.log('🔗 OAuth redirect URL:', redirectUrl);
+console.log('⚠️  Add this EXACT URL to Supabase Dashboard:');
+console.log('   Authentication → URL Configuration → Redirect URLs');
+console.log('═══════════════════════════════════════════════════════');
 
 interface AuthMethodScreenProps {
   navigation: any;
@@ -85,34 +91,70 @@ export default function AuthMethodScreen({ navigation, route }: AuthMethodScreen
           try {
             console.log('📍 Callback URL:', result.url);
             
-            // Extract tokens - try hash fragment first, then query params
-            const url = new URL(result.url);
-            let params = new URLSearchParams(url.hash.substring(1));
-            let accessToken = params.get('access_token');
-            let refreshToken = params.get('refresh_token');
+            // Parse URL manually - new URL() can fail on exp:// schemes
+            const callbackUrl = result.url;
+            const hashIndex = callbackUrl.indexOf('#');
+            const queryIndex = callbackUrl.indexOf('?');
             
-            // If not in hash, try query params
-            if (!accessToken) {
-              params = new URLSearchParams(url.search);
-              accessToken = params.get('access_token');
-              refreshToken = params.get('refresh_token');
+            let hashParams = new URLSearchParams();
+            let queryParams = new URLSearchParams();
+            
+            if (hashIndex !== -1) {
+              hashParams = new URLSearchParams(callbackUrl.substring(hashIndex + 1));
             }
+            if (queryIndex !== -1) {
+              const queryEnd = hashIndex !== -1 && hashIndex > queryIndex ? hashIndex : callbackUrl.length;
+              queryParams = new URLSearchParams(callbackUrl.substring(queryIndex + 1, queryEnd));
+            }
+            
+            console.log('🔍 [Google] Hash params:', [...hashParams.entries()]);
+            console.log('🔍 [Google] Query params:', [...queryParams.entries()]);
+            
+            // Try hash fragment first (implicit flow), then query params
+            let accessToken = hashParams.get('access_token') || queryParams.get('access_token');
+            let refreshToken = hashParams.get('refresh_token') || queryParams.get('refresh_token');
             
             // Check for PKCE code (Supabase returns code instead of tokens)
             if (!accessToken) {
-              const code = params.get('code') || new URLSearchParams(url.search).get('code');
+              const code = hashParams.get('code') || queryParams.get('code');
+              console.log('🔐 [Google] Looking for code, found:', code ? `${code.substring(0, 10)}...` : 'NONE');
+              
               if (code) {
                 console.log('🔐 [Google] PKCE code found, exchanging...');
-                const { data: sessionData, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
-                if (exchangeError) {
-                  console.error('❌ [Google] Code exchange failed:', exchangeError);
-                  Alert.alert('Sign In Error', exchangeError.message);
+                try {
+                  const { data: sessionData, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+                  console.log('🔐 [Google] Exchange result - data:', !!sessionData, 'error:', exchangeError?.message || 'none');
+                  
+                  if (exchangeError) {
+                    console.error('❌ [Google] Code exchange failed:', exchangeError);
+                    Alert.alert('Sign In Error', `Code exchange failed: ${exchangeError.message}`);
+                    setIsLoading(null);
+                    return;
+                  }
+                  
+                  if (sessionData?.session) {
+                    accessToken = sessionData.session.access_token;
+                    refreshToken = sessionData.session.refresh_token;
+                    console.log('✅ [Google] Code exchanged successfully, token:', !!accessToken);
+                  } else {
+                    console.error('❌ [Google] No session in exchange response');
+                  }
+                } catch (exchangeErr: any) {
+                  console.error('❌ [Google] Exchange threw:', exchangeErr);
+                  Alert.alert('Sign In Error', `Exchange error: ${exchangeErr.message}`);
                   setIsLoading(null);
                   return;
                 }
-                accessToken = sessionData.session?.access_token || null;
-                refreshToken = sessionData.session?.refresh_token || null;
-                console.log('✅ [Google] Code exchanged, token:', !!accessToken);
+              } else {
+                // Check for error in callback
+                const error = hashParams.get('error') || queryParams.get('error');
+                const errorDesc = hashParams.get('error_description') || queryParams.get('error_description');
+                if (error) {
+                  console.error('❌ [Google] OAuth error:', error, errorDesc);
+                  Alert.alert('Sign In Error', errorDesc || error);
+                  setIsLoading(null);
+                  return;
+                }
               }
             }
             
@@ -167,7 +209,13 @@ export default function AuthMethodScreen({ navigation, route }: AuthMethodScreen
               }
               return;
             } else {
-              Alert.alert('Sign In Error', 'No token received');
+              console.error('❌ [Google] No token and no code found in callback URL');
+              console.error('❌ [Google] This usually means Supabase redirect URL config is wrong');
+              console.error('❌ [Google] Expected redirect URL:', redirectUrl);
+              Alert.alert(
+                'Sign In Error', 
+                'No token received. Check that your Supabase redirect URL matches:\n\n' + redirectUrl
+              );
             }
           } catch (urlError: any) {
             console.error('❌ [Google] Error:', urlError);
