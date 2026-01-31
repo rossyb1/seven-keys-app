@@ -470,7 +470,22 @@ async function handleToolCall(
         .update({ status: "escalated" })
         .eq("id", conversationId);
 
-      // Could also create an escalation record here
+      // Create escalation record
+      const { error: escalationError } = await supabase
+        .from("escalations")
+        .insert({
+          conversation_id: conversationId,
+          user_id: userId,
+          reason: toolInput.reason,
+          priority: toolInput.urgency || "normal",
+          status: "pending",
+          notes: toolInput.summary,
+        });
+
+      if (escalationError) {
+        console.error("Failed to create escalation record:", escalationError);
+      }
+
       console.log(`🚨 ESCALATION: ${toolInput.reason} - ${toolInput.summary}`);
 
       return JSON.stringify({
