@@ -9,6 +9,9 @@ const ALLOWED_ORIGINS = [
   "http://localhost:8081",
   "http://127.0.0.1:8081",
   "exp://localhost:8081",
+  "exp://192.168.1.132:8081",
+  // TODO: Add production domains here before launch
+  // "https://your-production-domain.com",
 ];
 
 const getCorsHeaders = (origin?: string | null) => {
