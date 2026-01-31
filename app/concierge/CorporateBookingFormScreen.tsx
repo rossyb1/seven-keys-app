@@ -12,6 +12,7 @@ import {
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ChevronLeft, ChevronDown } from 'lucide-react-native';
 import { useAuth } from '../../src/contexts/AuthContext';
+import { createSpecialBookingRequest } from '../../src/services/api';
 import PrimaryButton from '../../components/buttons/PrimaryButton';
 
 const BACKGROUND_COLOR = '#0A1628';
@@ -63,8 +64,26 @@ export default function CorporateBookingFormScreen({ navigation }: CorporateBook
 
     setIsSubmitting(true);
     try {
-      // TODO: Create API function for corporate bookings
-      // All corporate bookings escalate to human
+      const result = await createSpecialBookingRequest({
+        user_id: '',
+        request_type: 'corporate',
+        event_date: selectedDate?.toISOString(),
+        guest_count: parseInt(attendees),
+        budget: budgetRange || undefined,
+        details: {
+          company_name: companyName,
+          event_type: eventType,
+          contact_name: contactName,
+          email: email,
+          phone: phone,
+          requirements: requirements,
+        },
+      });
+
+      if (!result.success) {
+        throw new Error(result.error);
+      }
+
       Alert.alert(
         'Inquiry Submitted',
         'Your corporate booking inquiry has been submitted. Our team will reach out with options shortly.',
