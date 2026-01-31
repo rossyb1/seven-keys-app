@@ -525,6 +525,22 @@ serve(async (req) => {
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
+    // Rate limiting: max 20 messages per minute per user
+    const oneMinuteAgo = new Date(Date.now() - 60000).toISOString();
+    const { count, error: countError } = await supabase
+      .from("messages")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", user_id)
+      .eq("sender", "member")
+      .gte("created_at", oneMinuteAgo);
+
+    if (!countError && count !== null && count >= 20) {
+      return new Response(
+        JSON.stringify({ error: "Rate limit exceeded. Please wait a moment before sending more messages." }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     // Get or create conversation
     let finalConversationId = conversation_id;
     if (!finalConversationId) {
