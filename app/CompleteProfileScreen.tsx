@@ -52,6 +52,10 @@ export default function CompleteProfileScreen({ navigation, route }: CompletePro
   }, []);
 
   const handleComplete = async () => {
+    console.log('🔵 handleComplete called');
+    console.log('🔵 phoneNumber:', phoneNumber);
+    console.log('🔵 userId from route:', userId);
+    
     if (!phoneNumber.trim()) {
       setError('Please enter your phone number');
       return;
@@ -62,19 +66,28 @@ export default function CompleteProfileScreen({ navigation, route }: CompletePro
 
     try {
       const fullPhone = `${selectedCountry.dialCode}${phoneNumber.replace(/\s/g, '')}`;
+      console.log('🔵 fullPhone:', fullPhone);
       
       // Get auth user data for email
       const { data: { user: authUser } } = await supabase.auth.getUser();
+      console.log('🔵 authUser:', authUser?.id, authUser?.email);
+      
       if (!authUser) {
         throw new Error('No authenticated user found');
       }
 
+      // Use authUser.id if userId from route is missing
+      const finalUserId = userId || authUser.id;
+      console.log('🔵 finalUserId:', finalUserId);
+
       // Check if profile already exists
-      const { data: existingProfile } = await supabase
+      const { data: existingProfile, error: fetchError } = await supabase
         .from('users')
         .select('id')
-        .eq('id', userId)
+        .eq('id', finalUserId)
         .single();
+
+      console.log('🔵 existingProfile:', existingProfile, 'fetchError:', fetchError?.message);
 
       if (existingProfile) {
         // Profile exists - update it
@@ -86,34 +99,42 @@ export default function CompleteProfileScreen({ navigation, route }: CompletePro
             full_name: userName || authUser.user_metadata?.full_name || authUser.email?.split('@')[0],
             invite_code_used: inviteCode?.toUpperCase() || null,
           })
-          .eq('id', userId);
+          .eq('id', finalUserId);
 
-        if (updateError) throw updateError;
+        if (updateError) {
+          console.error('❌ Update error:', updateError);
+          throw updateError;
+        }
+        console.log('✅ Profile updated!');
       } else {
         // Profile doesn't exist - create it
         console.log('📝 Creating new profile for OAuth user...');
         const { error: insertError } = await supabase
           .from('users')
           .insert({
-            id: userId,
+            id: finalUserId,
             email: authUser.email,
             full_name: userName || authUser.user_metadata?.full_name || authUser.email?.split('@')[0],
             phone: fullPhone,
             tier: 'blue',
             points_balance: 100,
-            preferred_cities: JSON.stringify([]), // Empty - will be set in onboarding
+            preferred_cities: [], // Empty array - will be set in onboarding
             invite_code_used: inviteCode?.toUpperCase() || null,
           });
 
-        if (insertError) throw insertError;
+        if (insertError) {
+          console.error('❌ Insert error:', insertError);
+          throw insertError;
+        }
+        console.log('✅ Profile created!');
       }
 
-      console.log('✅ Profile saved, auth context will handle navigation to onboarding');
-      // Auth context will detect the user and show OnboardingStack (CitySelection)
-      // because preferred_cities is empty
+      console.log('✅ Profile saved, navigating to city selection...');
+      // Navigate to city selection
+      navigation.replace('CitySelection');
       
     } catch (err: any) {
-      console.error('Complete profile error:', err);
+      console.error('❌ Complete profile error:', err);
       setError(err.message || 'Failed to complete profile');
     } finally {
       setIsSubmitting(false);
