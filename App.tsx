@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { BackgroundColors, AccentColors } from './constants/brand';
 import { useAppFonts } from './hooks/useAppFonts';
 import { AuthProvider, useAuth } from './src/contexts/AuthContext';
+import ErrorBoundary from './src/components/ErrorBoundary';
 import SplashScreen from './app/SplashScreen';
 import InviteCodeScreen from './app/InviteCodeScreen';
 import AuthMethodScreen from './app/AuthMethodScreen';
@@ -203,10 +204,12 @@ export default function App() {
   }
 
   return (
-    <AuthProvider>
-      <NavigationContainer>
-        <RootNavigator />
-      </NavigationContainer>
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <NavigationContainer>
+          <RootNavigator />
+        </NavigationContainer>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
